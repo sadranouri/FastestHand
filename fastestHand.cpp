@@ -22,6 +22,10 @@
 #define SHOOT "shoot"
 #define DEFEND "defend"
 #define RELOAD "reload"
+#define BRONZE "bronze"
+#define SILVER "silver"
+#define GOLD "gold"
+#define PLATINUM "platinum"
 using namespace std;
 
 
@@ -1507,3 +1511,5 @@ void FastestHand::outputRankedPlayers(vector<Player> ranked_players)
         player_number++;
     }
 }
+
+

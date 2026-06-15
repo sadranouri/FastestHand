@@ -2,6 +2,10 @@
 #include "players.hpp"
 #define LOGGED_IN "logged in"
 #define LOGGED_OUT "logged out"
+#define BRONZE "bronze"
+#define SILVER "silver"
+#define GOLD "gold"
+#define PLATINUM "platinum"
 using namespace std;
 
 
@@ -10,6 +14,8 @@ Player::Player(string username, string password)
     username_ = username;
     password_ = password;
     XP_ = 500;
+    RP_ = 1200;
+    rankLeveling(1200);
     status_ = LOGGED_OUT;
     casual_match_ready_ = false;
     is_playing_ = false;
@@ -23,6 +29,7 @@ Player::Player(string username, string password, double XP, double RP)
     password_ = password;
     XP_ = XP;
     RP_ = RP;
+    rankLeveling(RP);
     status_ = LOGGED_OUT;
     casual_match_ready_ = false;
     is_playing_ = false;
@@ -172,4 +179,25 @@ int Player::getRemainingBullets()
 double Player::getRP()
 {
     return RP_;
+}
+
+
+void Player::rankLeveling(double RP)
+{
+    if(RP < 1400)
+    {
+        ranked_level_ = BRONZE;
+    }
+    else if(RP >= 1400 && RP < 1750)
+    {
+        ranked_level_ = SILVER;
+    }
+    else if(RP >= 1750 && RP < 2250)
+    {
+        ranked_level_ = GOLD;
+    }
+    else if(RP >= 2250)
+    {
+        ranked_level_ = PLATINUM;
+    }
 }
