@@ -31,7 +31,7 @@ using namespace std;
 
 FastestHand::FastestHand(string playersFile, string adminsFile)
 {
-    invitation_id_ = 1;
+    casual_invitation_id_ = 1;
     report_id_ = 1;
     run(playersFile, adminsFile);
 }
@@ -666,13 +666,32 @@ void FastestHand::invitation()
     }
 
     cout << OK << endl;
-    CasualMatchInvitation newInvitation;
-    newInvitation.inviter = session.username;
-    newInvitation.invited = username;
-    newInvitation.match_type = match_type;
-    newInvitation.id = invitation_id_;
-    casualInvitations.push_back(newInvitation);
-    invitation_id_++;
+
+    inviteCreator(match_type, username);
+    
+}
+
+
+void FastestHand::inviteCreator(string match_type, string invited)
+{
+    if(match_type == "casual")
+    {
+        CasualMatchInvitation newInvitation;
+        newInvitation.inviter = session.username;
+        newInvitation.invited = invited;
+        newInvitation.id = casual_invitation_id_;
+        casualInvitations.push_back(newInvitation);
+        casual_invitation_id_++;
+    }
+    else if(match_type == "ranked")
+    {
+        RankedMatchInvitation newInvitation;
+        newInvitation.inviter = session.username;
+        newInvitation.invited = invited;
+        newInvitation.id = ranked_invitation_id_;
+        rankedInvitations.push_back(newInvitation);
+        ranked_invitation_id_++;
+    }
 }
 
 
@@ -738,9 +757,9 @@ void FastestHand::startMatch()
 
 
     cout << OK << endl;
-    p1_it->changeMatchType(i_it->match_type);
+    p1_it->changeMatchType("casual");
     p1_it->changePlayingStatus(true);
-    p2_it->changeMatchType(i_it->match_type);
+    p2_it->changeMatchType("casual");
     p2_it->changePlayingStatus(true);
     i_it->isAccepted = true;
 
@@ -1361,7 +1380,7 @@ vector<CasualMatchInvitation> FastestHand::inOrderInvitations(string username)
 
     for(CasualMatchInvitation invite : casualInvitations)
     {
-        if(invite.invited == username && invite.isAccepted == false && invite.isRejected == false && invite.match_type == "casual")
+        if(invite.invited == username && invite.isAccepted == false && invite.isRejected == false)
         {
             in_order_invitations.push_back(invite);
         }

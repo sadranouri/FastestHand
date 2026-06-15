@@ -18,7 +18,20 @@ struct CasualMatchInvitation
 {
     string inviter;
     string invited;
-    string match_type;
+    int id;
+    int turn_number = 1;
+    bool isAccepted = false;
+    bool isRejected = false;
+    bool isFinished = false;
+    string winner = "";
+    string loser = "";
+};
+
+
+struct RankedMatchInvitation
+{
+string inviter;
+    string invited;
     int id;
     int turn_number = 1;
     bool isAccepted = false;
@@ -70,6 +83,7 @@ public:
     void reportsOutput();
     void rankedMatchOpponents();
     void outputRankedPlayers(vector<Player> ranked_players);
+    void inviteCreator(string match_type, string invited);
     bool casualShoot(CasualMatchInvitation* invite, Player* current_player, Player* other_player);
     bool casualReload(CasualMatchInvitation* invite, Player* current_player, Player* other_player);
     bool usernameAlreadyExists(string username);
@@ -84,8 +98,10 @@ public:
     vector<Player> players;
     vector<Admin> admins;
     vector<CasualMatchInvitation> casualInvitations;
+    vector<RankedMatchInvitation> rankedInvitations;
     vector<Report> reports;
     Session session;
-    int invitation_id_;
+    int casual_invitation_id_;
+    int ranked_invitation_id_;
     int report_id_;
 };
