@@ -17,11 +17,12 @@ Player::Player(string username, string password)
 }
 
 
-Player::Player(string username, string password, double XP)
+Player::Player(string username, string password, double XP, double RP)
 {
     username_ = username;
     password_ = password;
     XP_ = XP;
+    RP_ = RP;
     status_ = LOGGED_OUT;
     casual_match_ready_ = false;
     is_playing_ = false;

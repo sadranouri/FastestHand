@@ -54,16 +54,21 @@ void FastestHand::readPlayersCSV(string playersFile)
         string username;
         string password;
         string strXP;
+        string strRP;
 
         if(getline(ss, username, ','))
         {
             if(getline(ss, password, ','))
             {
-                if(getline(ss, strXP))
+                if(getline(ss, strXP, ','))
                 {
-                    int XP = stoi(strXP);
-                    Player newPlayer(username, password, XP);
-                    players.push_back(newPlayer);
+                    double XP = stod(strXP);
+                    if(getline(ss, strRP))
+                    {
+                        double RP = stod(strRP);
+                        Player newPlayer(username, password, XP, RP);
+                        players.push_back(newPlayer);
+                    }
                 }
             }
         }
