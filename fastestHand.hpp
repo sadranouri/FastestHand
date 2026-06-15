@@ -68,6 +68,8 @@ public:
     void othersProfile(string username);
     void receivedInvitations();
     void reportsOutput();
+    void rankedMatchOpponents();
+    void inOrderRankedPlayers(string order_type);
     bool casualShoot(Invitation* invite, Player* current_player, Player* other_player);
     bool casualReload(Invitation* invite, Player* current_player, Player* other_player);
     bool usernameAlreadyExists(string username);

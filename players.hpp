@@ -26,6 +26,7 @@ public:
     string getStatus();
     string getCurrentAct();
     double getXP();
+    double getRP();
     int getRemainingBullets();
     void changeStatus();
     void changeReadyStatus(bool status);

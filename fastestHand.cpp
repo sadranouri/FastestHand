@@ -223,6 +223,10 @@ void FastestHand::get(string command)
     {
         reportsOutput();
     }
+    else if(command == "ranked_match_opponents")
+    {
+        rankedMatchOpponents();
+    }
     else
     {
         cout << NOT_FOUND << endl;
@@ -1397,4 +1401,73 @@ vector<Report> FastestHand::inOrderReports()
         return a.id < b.id;
     });
     return in_order_reports;
+}
+
+
+void FastestHand::rankedMatchOpponents()
+{
+    string rest_of_line;
+    getline(cin, rest_of_line);
+    string arg1;
+    string sort_order;
+
+    bool isEmpty = true;
+    for(char c : rest_of_line)
+    {
+        if(c != ' ' && c != '\t' && c != '\r')
+        {
+            isEmpty = false;
+            break;
+        }
+    }
+    
+    if(!isEmpty)
+    {
+        istringstream iss(rest_of_line);
+        iss >> arg1 >> sort_order;
+
+        inOrderRankedPlayers(sort_order);
+    }
+    else
+    {
+        inOrderRankedPlayers("desc");
+    }
+}
+
+
+void FastestHand::inOrderRankedPlayers(string order_type)
+{
+    vector<Player> in_order_players = players;
+    if(order_type == "desc")
+    {
+        sort(in_order_players.begin(), in_order_players.end(), [](Player a, Player b){
+            if(a.getRP() == b.getRP())
+            {
+                return a.getUsername() < b.getUsername();
+            }
+            return a.getRP() > b.getRP();
+        });
+    }
+    else if(order_type == "asc")
+    {
+        sort(in_order_players.begin(), in_order_players.end(), [](Player a, Player b){
+            if(a.getRP() == b.getRP())
+            {
+                return a.getUsername() < b.getUsername();
+            }
+            return a.getRP() < b.getRP();
+        });
+    }
+
+    int player_number = 1;
+
+    for(auto ranked_player : in_order_players)
+    {
+        if(ranked_player.getUsername() == session.username)
+        {
+            continue;
+        }
+        cout << player_number << ". " << ranked_player.getUsername() << " with " << ranked_player.getRP() << " RP" << endl;
+        player_number++;
+    }
 }

@@ -167,3 +167,9 @@ int Player::getRemainingBullets()
 {
     return current_match_.bullets;
 }
+
+
+double Player::getRP()
+{
+    return RP_;
+}
