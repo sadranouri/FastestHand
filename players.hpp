@@ -41,6 +41,7 @@ public:
     void decreaseXP(double XP);
     void addAct(string act);
     void rankLeveling(double RP);
+    void blockPlayer(string username);
     bool getReadyStatus();
     bool getPlayingStatus();
     vector<string> getActions();
@@ -56,6 +57,7 @@ private:
     string match_type_ = "";
     CasualGame current_match_;
     string ranked_level_;
+    vector<string> blocked_players_;
 };
 
 #endif

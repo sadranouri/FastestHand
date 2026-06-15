@@ -207,3 +207,9 @@ string Player::getRankedLevel()
 {
     return ranked_level_;
 }
+
+
+void Player::blockPlayer(string username)
+{
+    blocked_players_.push_back(username);
+}

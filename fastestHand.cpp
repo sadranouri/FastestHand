@@ -28,6 +28,8 @@
 #define PLATINUM "platinum"
 #define CASUAL "casual"
 #define RANKED "ranked"
+#define BLOCKED "blocked"
+#define UNBLOCKED "unblocked"
 using namespace std;
 
 
@@ -1535,3 +1537,93 @@ void FastestHand::outputRankedPlayers(vector<Player> ranked_players)
 }
 
 
+void FastestHand::block()
+{
+    map<string, string> setArgs;
+    string rest_of_line;
+    getline(cin, rest_of_line);
+    
+    string key;
+    string val;
+    istringstream iss(rest_of_line);
+    while(iss >> key >> quoted(val))
+    {
+        setArgs[key] = val;
+    }
+
+    map<string, string>::iterator u_it = find_if(setArgs.begin(), setArgs.end(), [](pair<string, string> p){
+        return p.first == "username";
+    });
+
+    map<string, string>::iterator s_it = find_if(setArgs.begin(), setArgs.end(), [](pair<string, string> p){
+        return p.first == "status";
+    });
+
+    if(u_it == setArgs.end() || s_it == setArgs.end())
+    {
+        cout << BAD_REQUEST << endl;
+        return;
+    }
+
+    string username = u_it->second;
+    string status = s_it->second;
+
+    if(session.isPlayer == false)
+    {
+        cout << PERMISSION_DENIED << endl;
+        return;
+    }
+
+    if(status != BLOCKED && status != UNBLOCKED)
+    {
+        cout << BAD_REQUEST << endl;
+        return;
+    }
+
+    if(usernameNotFound(username))
+    {
+        cout << NOT_FOUND << endl;
+        return;
+    }
+
+    if(adminUsername(username))
+    {
+        cout << BAD_REQUEST << endl;
+        return;
+    }
+
+    cout << OK << endl;
+
+    vector<Player>::iterator current_user = find_if(players.begin(), players.end(), [&](Player p){
+        return p.getUsername() == session.username;
+    });
+
+    current_user->blockPlayer(username);
+}
+
+
+bool FastestHand::usernameNotFound(string username)
+{
+    vector<Player>::iterator player_it = find_if(players.begin(), players.end(), [&](Player p){
+        return p.getUsername() == username;
+    });
+
+    if(player_it == players.end())
+    {
+        return true;
+    }
+    return false;
+}
+
+bool FastestHand::adminUsername(string username)
+{
+    vector<Admin>::iterator admin_it = find_if(admins.begin(), admins.end(), [&](Admin a){
+        return a.getUsername() == username;
+    });
+
+    if(admin_it != admins.end())
+    {
+        return true;
+    }
+    return false;
+}

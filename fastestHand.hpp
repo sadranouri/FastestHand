@@ -72,10 +72,13 @@ public:
     void rankedMatchOpponents();
     void outputRankedPlayers(vector<Player> ranked_players);
     void inviteCreator(string match_type, string invited);
+    void block();
     bool casualShoot(MatchInvitation* invite, Player* current_player, Player* other_player);
     bool casualReload(MatchInvitation* invite, Player* current_player, Player* other_player);
     bool usernameAlreadyExists(string username);
     bool wrongPassword(string username, string password);
+    bool usernameNotFound(string username);
+    bool adminUsername(string username);
     int totalWins(string username);
     int totalLosses(string username);
     double casualXP(Player winner, Player loser);
