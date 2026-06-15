@@ -26,6 +26,8 @@
 #define SILVER "silver"
 #define GOLD "gold"
 #define PLATINUM "platinum"
+#define CASUAL "casual"
+#define RANKED "ranked"
 using namespace std;
 
 
@@ -630,7 +632,7 @@ void FastestHand::invitation()
         return;
     }
 
-    if(m_it->second != "casual" && m_it->second != "ranked")
+    if(m_it->second != CASUAL && m_it->second != RANKED)
     {
         cout << BAD_REQUEST << endl;
         return;
