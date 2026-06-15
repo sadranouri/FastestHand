@@ -31,7 +31,7 @@ using namespace std;
 
 FastestHand::FastestHand(string playersFile, string adminsFile)
 {
-    casual_invitation_id_ = 1;
+    invitation_id_ = 1;
     report_id_ = 1;
     run(playersFile, adminsFile);
 }
@@ -630,7 +630,7 @@ void FastestHand::invitation()
         return;
     }
 
-    if(m_it->second != "casual")
+    if(m_it->second != "casual" && m_it->second != "ranked")
     {
         cout << BAD_REQUEST << endl;
         return;
@@ -668,30 +668,19 @@ void FastestHand::invitation()
     cout << OK << endl;
 
     inviteCreator(match_type, username);
-    
+
 }
 
 
 void FastestHand::inviteCreator(string match_type, string invited)
 {
-    if(match_type == "casual")
-    {
-        CasualMatchInvitation newInvitation;
-        newInvitation.inviter = session.username;
-        newInvitation.invited = invited;
-        newInvitation.id = casual_invitation_id_;
-        casualInvitations.push_back(newInvitation);
-        casual_invitation_id_++;
-    }
-    else if(match_type == "ranked")
-    {
-        RankedMatchInvitation newInvitation;
-        newInvitation.inviter = session.username;
-        newInvitation.invited = invited;
-        newInvitation.id = ranked_invitation_id_;
-        rankedInvitations.push_back(newInvitation);
-        ranked_invitation_id_++;
-    }
+    MatchInvitation newInvitation;
+    newInvitation.inviter = session.username;
+    newInvitation.invited = invited;
+    newInvitation.match_type = match_type;
+    newInvitation.id = invitation_id_;
+    matchInvitations.push_back(newInvitation);
+    invitation_id_++;
 }
 
 
@@ -717,20 +706,20 @@ void FastestHand::startMatch()
         return;
     }
 
-    vector<CasualMatchInvitation>::iterator i_it = find_if(casualInvitations.begin(), casualInvitations.end(), [&](CasualMatchInvitation i){
+    vector<MatchInvitation>::iterator i_it = find_if(matchInvitations.begin(), matchInvitations.end(), [&](MatchInvitation i){
         return i.id == invitation_id && i.isFinished == false;
     });
-
-    if(i_it == casualInvitations.end())
-    {
-        cout << NOT_FOUND << endl;
-        return;
-    }
 
 
     if(session.isPlayer == false || session.username != i_it->invited)
     {
         cout << PERMISSION_DENIED << endl;
+        return;
+    }
+
+    if(i_it == matchInvitations.end())
+    {
+        cout << NOT_FOUND << endl;
         return;
     }
 
@@ -757,9 +746,9 @@ void FastestHand::startMatch()
 
 
     cout << OK << endl;
-    p1_it->changeMatchType("casual");
+    p1_it->changeMatchType(i_it->match_type);
     p1_it->changePlayingStatus(true);
-    p2_it->changeMatchType("casual");
+    p2_it->changeMatchType(i_it->match_type);
     p2_it->changePlayingStatus(true);
     i_it->isAccepted = true;
 
@@ -792,7 +781,7 @@ void FastestHand::rejectInvitation()
 
 
 
-    vector<CasualMatchInvitation>::iterator i_it = find_if(casualInvitations.begin(), casualInvitations.end(), [&](CasualMatchInvitation i){
+    vector<MatchInvitation>::iterator i_it = find_if(matchInvitations.begin(), matchInvitations.end(), [&](MatchInvitation i){
         return i.id == invitation_id;
     });
 
@@ -803,7 +792,7 @@ void FastestHand::rejectInvitation()
     }
 
 
-    if(i_it == casualInvitations.end())
+    if(i_it == matchInvitations.end())
     {
         cout << NOT_FOUND << endl;
         return;
@@ -850,12 +839,12 @@ void FastestHand::action()
     }
 
 
-    vector<CasualMatchInvitation>::iterator i_it = find_if(casualInvitations.begin(), casualInvitations.end(), [&](CasualMatchInvitation i){
+    vector<MatchInvitation>::iterator i_it = find_if(matchInvitations.begin(), matchInvitations.end(), [&](MatchInvitation i){
         return i.isAccepted == true && (i.invited == session.username || i.inviter == session.username);
     });
 
 
-    if(i_it == casualInvitations.end())
+    if(i_it == matchInvitations.end())
     {
         cout << NOT_FOUND << endl;
         return;
@@ -865,7 +854,7 @@ void FastestHand::action()
 }
 
 
-void FastestHand::performAction(CasualMatchInvitation* invite, string act)
+void FastestHand::performAction(MatchInvitation* invite, string act)
 {
     vector<Player>::iterator current_player = find_if(players.begin(), players.end(), [&](Player p){
         return p.getUsername() == session.username;
@@ -970,7 +959,7 @@ void FastestHand::performAction(CasualMatchInvitation* invite, string act)
 }
 
 
-bool FastestHand::casualShoot(CasualMatchInvitation* invite, Player* current_player, Player* other_player)
+bool FastestHand::casualShoot(MatchInvitation* invite, Player* current_player, Player* other_player)
 {
     current_player->performAction(SHOOT);
     if(other_player->getCasualGameStatus().act == "")
@@ -1007,7 +996,7 @@ bool FastestHand::casualShoot(CasualMatchInvitation* invite, Player* current_pla
 }
 
 
-bool FastestHand::casualReload(CasualMatchInvitation* invite, Player* current_player, Player* other_player)
+bool FastestHand::casualReload(MatchInvitation* invite, Player* current_player, Player* other_player)
 {
     current_player->performAction(RELOAD);
     if(other_player->getCasualGameStatus().act == "")
@@ -1044,7 +1033,7 @@ bool FastestHand::casualReload(CasualMatchInvitation* invite, Player* current_pl
 }
 
 
-void FastestHand::casualDefend(CasualMatchInvitation* invite, Player* current_player, Player* other_player)
+void FastestHand::casualDefend(MatchInvitation* invite, Player* current_player, Player* other_player)
 {
     if(other_player->getCasualGameStatus().act == "")
     {
@@ -1094,11 +1083,11 @@ void FastestHand::matchStatus()
         return;
     }
 
-    vector<CasualMatchInvitation>::iterator i_it = find_if(casualInvitations.begin(), casualInvitations.end(), [&](CasualMatchInvitation i){
+    vector<MatchInvitation>::iterator i_it = find_if(matchInvitations.begin(), matchInvitations.end(), [&](MatchInvitation i){
         return (i.invited == session.username || i.inviter == session.username) && i.isAccepted == true && i.isFinished == false;
     });
 
-    if(i_it == casualInvitations.end())
+    if(i_it == matchInvitations.end())
     {
         cout << NOT_FOUND << endl;
         return;
@@ -1127,7 +1116,7 @@ void FastestHand::matchStatus()
 }
 
 
-void FastestHand::matchStatusOutput(Player current_player, Player other_player, CasualMatchInvitation match)
+void FastestHand::matchStatusOutput(Player current_player, Player other_player, MatchInvitation match)
 {
     cout << "Turn " << match.turn_number << endl;
     if(current_player.getCurrentAct() == "")
@@ -1325,7 +1314,7 @@ int FastestHand::totalWins(string username)
 {
     int total_wins = 0;
 
-    for(CasualMatchInvitation match : casualInvitations)
+    for(MatchInvitation match : matchInvitations)
     {
         if(match.winner == username)
         {
@@ -1340,7 +1329,7 @@ int FastestHand::totalLosses(string username)
 {
     int total_losses = 0;
 
-    for(CasualMatchInvitation match : casualInvitations)
+    for(MatchInvitation match : matchInvitations)
     {
         if(match.loser == username)
         {
@@ -1366,7 +1355,7 @@ void FastestHand::receivedInvitations()
     }
     else
     {
-        for(CasualMatchInvitation invite : inOrderInvitations(session.username))
+        for(MatchInvitation invite : inOrderInvitations(session.username))
         {
             cout << invite.id << ": Invitation from \"" << invite.inviter << "\" for a \"casual\" match" << endl;
         }
@@ -1374,11 +1363,11 @@ void FastestHand::receivedInvitations()
 }
 
 
-vector<CasualMatchInvitation> FastestHand::inOrderInvitations(string username)
+vector<MatchInvitation> FastestHand::inOrderInvitations(string username)
 {
-    vector<CasualMatchInvitation> in_order_invitations;
+    vector<MatchInvitation> in_order_invitations;
 
-    for(CasualMatchInvitation invite : casualInvitations)
+    for(MatchInvitation invite : matchInvitations)
     {
         if(invite.invited == username && invite.isAccepted == false && invite.isRejected == false)
         {
@@ -1386,7 +1375,7 @@ vector<CasualMatchInvitation> FastestHand::inOrderInvitations(string username)
         }
     }
 
-    sort(in_order_invitations.begin(), in_order_invitations.end(), [](CasualMatchInvitation a, CasualMatchInvitation b){
+    sort(in_order_invitations.begin(), in_order_invitations.end(), [](MatchInvitation a, MatchInvitation b){
         return a.id < b.id;
     });
 
