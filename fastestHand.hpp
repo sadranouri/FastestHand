@@ -69,7 +69,7 @@ public:
     void receivedInvitations();
     void reportsOutput();
     void rankedMatchOpponents();
-    void inOrderRankedPlayers(string order_type);
+    void outputRankedPlayers(vector<Player> ranked_players);
     bool casualShoot(Invitation* invite, Player* current_player, Player* other_player);
     bool casualReload(Invitation* invite, Player* current_player, Player* other_player);
     bool usernameAlreadyExists(string username);
@@ -78,6 +78,7 @@ public:
     int totalLosses(string username);
     double casualXP(Player winner, Player loser);
     vector<Player> inOrderReadyPlayers(string order_type);
+    vector<Player> inOrderRankedPlayers(string order_type);
     vector<Invitation> inOrderInvitations(string username);
     vector<Report> inOrderReports();
     vector<Player> players;

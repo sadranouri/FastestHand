@@ -1409,7 +1409,7 @@ void FastestHand::rankedMatchOpponents()
     string rest_of_line;
     getline(cin, rest_of_line);
     string arg1;
-    string sort_order;
+    string order_type;
 
     bool isEmpty = true;
     for(char c : rest_of_line)
@@ -1424,18 +1424,49 @@ void FastestHand::rankedMatchOpponents()
     if(!isEmpty)
     {
         istringstream iss(rest_of_line);
-        iss >> arg1 >> sort_order;
+        iss >> arg1 >> quoted(order_type);
 
-        inOrderRankedPlayers(sort_order);
+        if(arg1 != "sort" || (order_type != "desc" && order_type != "asc"))
+        {
+            cout << BAD_REQUEST << endl;
+            return;
+        }
+
+        if(session.isPlayer == false)
+        {
+            cout << PERMISSION_DENIED << endl;
+            return;
+        }
+
+        if(inOrderRankedPlayers(order_type).size() == 0)
+        {
+            cout << EMPTY << endl;
+            return;
+        }
+
+        outputRankedPlayers(inOrderRankedPlayers(order_type));
+        
     }
     else
     {
-        inOrderRankedPlayers("desc");
+        if(session.isPlayer == false)
+        {
+            cout << PERMISSION_DENIED << endl;
+            return;
+        }
+
+        if(inOrderRankedPlayers("desc").size() == 0)
+        {
+            cout << EMPTY << endl;
+            return;
+        }
+
+        outputRankedPlayers(inOrderRankedPlayers("desc"));
     }
 }
 
 
-void FastestHand::inOrderRankedPlayers(string order_type)
+vector<Player> FastestHand::inOrderRankedPlayers(string order_type)
 {
     vector<Player> in_order_players = players;
     if(order_type == "desc")
@@ -1459,9 +1490,14 @@ void FastestHand::inOrderRankedPlayers(string order_type)
         });
     }
 
-    int player_number = 1;
+    return in_order_players;
+}
 
-    for(auto ranked_player : in_order_players)
+
+void FastestHand::outputRankedPlayers(vector<Player> ranked_players)
+{
+    int player_number = 1;
+    for(auto ranked_player : ranked_players)
     {
         if(ranked_player.getUsername() == session.username)
         {
