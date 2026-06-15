@@ -201,3 +201,9 @@ void Player::rankLeveling(double RP)
         ranked_level_ = PLATINUM;
     }
 }
+
+
+string Player::getRankedLevel()
+{
+    return ranked_level_;
+}

@@ -25,6 +25,7 @@ public:
     string getPassword();
     string getStatus();
     string getCurrentAct();
+    string getRankedLevel();
     double getXP();
     double getRP();
     int getRemainingBullets();

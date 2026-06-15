@@ -14,7 +14,7 @@ struct Session
 };
 
 
-struct Invitation
+struct CasualMatchInvitation
 {
     string inviter;
     string invited;
@@ -58,10 +58,10 @@ public:
     void startMatch();
     void rejectInvitation();
     void action();
-    void performAction(Invitation* invite, string act);
-    void casualDefend(Invitation* invite, Player* current_player, Player* other_player);
+    void performAction(CasualMatchInvitation* invite, string act);
+    void casualDefend(CasualMatchInvitation* invite, Player* current_player, Player* other_player);
     void matchStatus();
-    void matchStatusOutput(Player current_player, Player other_player, Invitation match);
+    void matchStatusOutput(Player current_player, Player other_player, CasualMatchInvitation match);
     void report();
     void profile();
     void myProfile();
@@ -70,8 +70,8 @@ public:
     void reportsOutput();
     void rankedMatchOpponents();
     void outputRankedPlayers(vector<Player> ranked_players);
-    bool casualShoot(Invitation* invite, Player* current_player, Player* other_player);
-    bool casualReload(Invitation* invite, Player* current_player, Player* other_player);
+    bool casualShoot(CasualMatchInvitation* invite, Player* current_player, Player* other_player);
+    bool casualReload(CasualMatchInvitation* invite, Player* current_player, Player* other_player);
     bool usernameAlreadyExists(string username);
     bool wrongPassword(string username, string password);
     int totalWins(string username);
@@ -79,11 +79,11 @@ public:
     double casualXP(Player winner, Player loser);
     vector<Player> inOrderReadyPlayers(string order_type);
     vector<Player> inOrderRankedPlayers(string order_type);
-    vector<Invitation> inOrderInvitations(string username);
+    vector<CasualMatchInvitation> inOrderInvitations(string username);
     vector<Report> inOrderReports();
     vector<Player> players;
     vector<Admin> admins;
-    vector<Invitation> invitations;
+    vector<CasualMatchInvitation> casualInvitations;
     vector<Report> reports;
     Session session;
     int invitation_id_;
