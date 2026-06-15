@@ -669,10 +669,34 @@ void FastestHand::invitation()
         return;
     }
 
+    if(invitedPlayerBlockedYou(username))
+    {
+        cout << NOT_FOUND << endl;
+        return;
+    }
+
     cout << OK << endl;
 
     inviteCreator(match_type, username);
 
+}
+
+
+bool FastestHand::invitedPlayerBlockedYou(string invited)
+{
+    vector<Player>::iterator invited_player = find_if(players.begin(), players.end(), [&](Player p){
+        return p.getUsername() == invited;
+    });
+
+    vector<string>::iterator blocked_player = find_if(invited_player->getBlockedPlayers().begin(), invited_player->getBlockedPlayers().end(), [&](string s){
+        return s == session.username;
+    });
+
+    if(blocked_player != invited_player->getBlockedPlayers().end())
+    {
+        return true;
+    }
+    return false;
 }
 
 

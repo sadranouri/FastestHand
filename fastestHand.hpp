@@ -79,6 +79,7 @@ public:
     bool wrongPassword(string username, string password);
     bool usernameNotFound(string username);
     bool adminUsername(string username);
+    bool invitedPlayerBlockedYou(string invited);
     int totalWins(string username);
     int totalLosses(string username);
     double casualXP(Player winner, Player loser);

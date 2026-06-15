@@ -213,3 +213,9 @@ void Player::blockPlayer(string username)
 {
     blocked_players_.push_back(username);
 }
+
+
+vector<string> Player::getBlockedPlayers()
+{
+    return blocked_players_;
+}

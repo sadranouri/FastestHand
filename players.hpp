@@ -45,6 +45,7 @@ public:
     bool getReadyStatus();
     bool getPlayingStatus();
     vector<string> getActions();
+    vector<string> getBlockedPlayers();
     CasualGame getCasualGameStatus();
 private:
     string username_;
