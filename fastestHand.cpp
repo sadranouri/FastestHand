@@ -747,7 +747,7 @@ void FastestHand::startMatch()
     }
 
     cout << OK << endl;
-    
+
     if(i_it->match_type == CASUAL)
     {
     startCasualMatch(&(*i_it), &(*p1_it), &(*p2_it));
@@ -874,11 +874,20 @@ void FastestHand::action()
         return;
     }
 
-    performAction(&(*i_it), act);
+    if(i_it->match_type == CASUAL)
+    {
+    
+        casualPerformAction(&(*i_it), act);
+    }
+    else if(i_it->match_type == RANKED)
+    {
+        rankedPerformAction(&(*i_it), act);
+    }
+
 }
 
 
-void FastestHand::performAction(MatchInvitation* invite, string act)
+void FastestHand::casualPerformAction(MatchInvitation* invite, string act)
 {
     vector<Player>::iterator current_player = findPlayerByUsername(session.username);
 
@@ -1572,4 +1581,17 @@ bool FastestHand::adminUsername(string username)
         return true;
     }
     return false;
+}
+
+
+void FastestHand::rankedPerformAction(MatchInvitation *invite, string act)
+{
+    vector<Player>::iterator current_player = findPlayerByUsername(session.username);
+
+    if(current_player->getCurrentAct().size() != 0)
+    {
+        cout << PERMISSION_DENIED << endl;
+        return;
+    }
+    
 }

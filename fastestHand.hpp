@@ -59,7 +59,7 @@ public:
     void startMatch();
     void rejectInvitation();
     void action();
-    void performAction(MatchInvitation* invite, string act);
+    void casualPerformAction(MatchInvitation* invite, string act);
     void casualDefend(MatchInvitation* invite, Player* current_player, Player* other_player);
     void matchStatus();
     void matchStatusOutput(Player current_player, Player other_player, MatchInvitation match);
@@ -76,6 +76,10 @@ public:
     void endCasualGame(MatchInvitation *match, Player *winner, Player *loser);
     void startCasualMatch(MatchInvitation *match, Player *player1, Player *player2);
     void startRankedGame(MatchInvitation *match, Player *player1, Player *player2);
+    void rankedPerformAction(MatchInvitation *invite, string act);
+    void rankedShoot(MatchInvitation *invite, Player *current_player, Player *other_player);
+    void rankedReload(MatchInvitation *invite, Player *current_player, Player *other_player);
+    void rankedDefend(MatchInvitation *invite, Player *current_player, Player *other_player);
     bool casualShoot(MatchInvitation* invite, Player* current_player, Player* other_player);
     bool casualReload(MatchInvitation* invite, Player* current_player, Player* other_player);
     bool usernameAlreadyExists(string username);

@@ -45,7 +45,7 @@ public:
     void startCasualGame();
     void endCasualGame();
     void changeCasualAct(string act);
-    void performAction(string act);
+    void casualPerformAction(string act);
     void increaseXP(double XP);
     void decreaseXP(double XP);
     void addAct(string act);

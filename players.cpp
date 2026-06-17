@@ -127,7 +127,7 @@ void Player::changeCasualAct(string act)
 }
 
 
-void Player::performAction(string act)
+void Player::casualPerformAction(string act)
 {
     if(act == "shoot")
     {
