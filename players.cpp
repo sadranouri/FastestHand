@@ -219,3 +219,9 @@ vector<string> Player::getBlockedPlayers()
 {
     return blocked_players_;
 }
+
+
+void Player::startRankedGame()
+{
+    ranked_match_ = RankedGame();
+}

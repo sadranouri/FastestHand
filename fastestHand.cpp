@@ -746,16 +746,38 @@ void FastestHand::startMatch()
         return;
     }
 
-
     cout << OK << endl;
-    p1_it->changeMatchType(i_it->match_type);
-    p1_it->changePlayingStatus(true);
-    p2_it->changeMatchType(i_it->match_type);
-    p2_it->changePlayingStatus(true);
-    i_it->isAccepted = true;
+    
+    if(i_it->match_type == CASUAL)
+    {
+    startCasualMatch(&(*i_it), &(*p1_it), &(*p2_it));
+    }
+    else if(i_it->match_type == RANKED)
+    {
+        startRankedGame(&(*i_it), &(*p1_it), &(*p2_it));
+    }
+}
 
-    p1_it->startCasualGame();
-    p2_it->startCasualGame();
+
+void FastestHand::startCasualMatch(MatchInvitation *match, Player *player1, Player *player2)
+{
+    player1->changeMatchType(CASUAL);
+    player1->changePlayingStatus(true);
+    player2->changeMatchType(CASUAL);
+    player2->changePlayingStatus(true);
+    player1->startCasualGame();
+    player2->startCasualGame();
+}
+
+
+void FastestHand::startRankedGame(MatchInvitation *match, Player *player1, Player *player2)
+{
+    player1->changeMatchType(RANKED);
+    player1->changePlayingStatus(true);
+    player2->changeMatchType(RANKED);
+    player2->changePlayingStatus(true);
+    player1->startRankedGame();
+    player2->startRankedGame();
 }
 
 

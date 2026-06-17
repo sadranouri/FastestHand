@@ -74,6 +74,8 @@ public:
     void inviteCreator(string match_type, string invited);
     void block();
     void endCasualGame(MatchInvitation *match, Player *winner, Player *loser);
+    void startCasualMatch(MatchInvitation *match, Player *player1, Player *player2);
+    void startRankedGame(MatchInvitation *match, Player *player1, Player *player2);
     bool casualShoot(MatchInvitation* invite, Player* current_player, Player* other_player);
     bool casualReload(MatchInvitation* invite, Player* current_player, Player* other_player);
     bool usernameAlreadyExists(string username);

@@ -51,6 +51,7 @@ public:
     void addAct(string act);
     void rankLeveling(double RP);
     void blockPlayer(string username);
+    void startRankedGame();
     bool getReadyStatus();
     bool getPlayingStatus();
     vector<string> getActions();
