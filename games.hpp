@@ -1,6 +1,5 @@
 #ifndef GAMES_HPP
 #define GAMES_HPP
-
 #include <iostream>
 using namespace std;
 
@@ -8,10 +7,15 @@ using namespace std;
 class Game
 {
 public:
-    Game(string inviter, string invited);
+    Game(string inviter, string invited, int invitation_id){
+        inviter_ = inviter;
+        invited_ = invited;
+        invitation_id_ = invitation_id;
+    }
 private:
     string inviter_;
     string invited_;
+    int invitation_id_;
     bool isFinished = false;
     string winner = "";
     string loser = "";

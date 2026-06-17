@@ -8,7 +8,7 @@ using namespace std;
 class Casual : private Game
 {
 public:
-    Casual(string inviter, string invited) : Game(inviter, invited)
+    Casual(string inviter, string invited, int invitation_id) : Game(inviter, invited, invitation_id)
     {
 
     };

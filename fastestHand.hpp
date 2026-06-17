@@ -3,6 +3,7 @@
 #include <vector>
 #include "players.hpp"
 #include "admins.hpp"
+#include "games.hpp"
 using namespace std;
 
 
@@ -19,13 +20,9 @@ struct MatchInvitation
     string inviter;
     string invited;
     int id;
-    int turn_number = 1;
     string match_type;
     bool isAccepted = false;
     bool isRejected = false;
-    bool isFinished = false;
-    string winner = "";
-    string loser = "";
 };
 
 
