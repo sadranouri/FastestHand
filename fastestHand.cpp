@@ -948,29 +948,26 @@ bool FastestHand::casualShoot(MatchInvitation* invite, Player* current_player, P
         current_player->changeCasualAct(SHOOT);
         return false;
     }
-    else if(other_player->getCasualGameStatus().act == SHOOT)
+
+    current_player->addAct(SHOOT);
+    current_player->changeCasualAct("");
+    other_player->changeCasualAct("");
+    invite->turn_number++;
+
+    if(other_player->getCasualGameStatus().act == SHOOT)
     {
-        current_player->addAct(SHOOT);
         other_player->addAct(SHOOT);
-        current_player->changeCasualAct("");
-        other_player->changeCasualAct("");
-        invite->turn_number++;
         return false;
     }
     else if(other_player->getCasualGameStatus().act == DEFEND)
     {
-        current_player->addAct(SHOOT);
         other_player->addAct(DEFEND);
-        current_player->changeCasualAct("");
-        other_player->changeCasualAct("");
-        invite->turn_number++;
         return false;
     }
     else if(other_player->getCasualGameStatus().act == RELOAD)
     {
-        current_player->addAct(SHOOT);
         other_player->addAct(RELOAD);
-        invite->turn_number++;
+        invite->turn_number--;
         return true;
     }
     return false;
@@ -985,29 +982,26 @@ bool FastestHand::casualReload(MatchInvitation* invite, Player* current_player, 
         current_player->changeCasualAct(RELOAD);
         return true;
     }
-    else if(other_player->getCasualGameStatus().act == RELOAD)
+
+    current_player->addAct(RELOAD);
+    current_player->changeCasualAct("");
+    other_player->changeCasualAct("");
+    invite->turn_number++;
+
+    if(other_player->getCasualGameStatus().act == RELOAD)
     {
-        current_player->addAct(RELOAD);
         other_player->addAct(RELOAD);
-        current_player->changeCasualAct("");
-        other_player->changeCasualAct("");
-        invite->turn_number++;
         return true;
     }
     else if(other_player->getCasualGameStatus().act == DEFEND)
     {
-        current_player->addAct(RELOAD);
         other_player->addAct(DEFEND);
-        current_player->changeCasualAct("");
-        other_player->changeCasualAct("");
-        invite->turn_number++;
         return true;
     }
     else if(other_player->getCasualGameStatus().act == SHOOT)
     {
-        current_player->addAct(RELOAD);
         other_player->addAct(SHOOT);
-        invite->turn_number++;
+        invite->turn_number--;
         return false;
     }
     return false;
@@ -1020,29 +1014,23 @@ void FastestHand::casualDefend(MatchInvitation* invite, Player* current_player, 
     {
         current_player->changeCasualAct(DEFEND);
     }
-    else if(other_player->getCasualGameStatus().act == SHOOT)
+    
+    current_player->addAct(DEFEND);
+    current_player->changeCasualAct("");
+    other_player->changeCasualAct("");
+    invite->turn_number++;
+    
+    if(other_player->getCasualGameStatus().act == SHOOT)
     {
-        current_player->addAct(DEFEND);
         other_player->addAct(SHOOT);
-        current_player->changeCasualAct("");
-        other_player->changeCasualAct("");
-        invite->turn_number++;
     }
     else if(other_player->getCasualGameStatus().act == RELOAD)
     {
-        current_player->addAct(DEFEND);
         other_player->addAct(RELOAD);
-        current_player->changeCasualAct("");
-        other_player->changeCasualAct("");
-        invite->turn_number++;
     }
     else if(other_player->getCasualGameStatus().act == DEFEND)
     {
-        current_player->addAct(DEFEND);
         other_player->addAct(DEFEND);
-        current_player->changeCasualAct("");
-        other_player->changeCasualAct("");
-        invite->turn_number++;
     }
     
 }
