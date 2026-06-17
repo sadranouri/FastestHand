@@ -65,7 +65,8 @@ private:
     bool casual_match_ready_ = false;
     bool is_playing_ = false;
     string match_type_ = "";
-    CasualGame current_match_;
+    CasualGame casual_match_;
+    RankedGame ranked_match_;
     string ranked_level_;
     vector<string> blocked_players_;
 };

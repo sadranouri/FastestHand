@@ -106,7 +106,7 @@ void Player::changePlayingStatus(bool playingStatus)
 
 void Player::startCasualGame()
 {
-    current_match_ = CasualGame();
+    casual_match_ = CasualGame();
 }
 
 void Player::endCasualGame()
@@ -117,13 +117,13 @@ void Player::endCasualGame()
 
 CasualGame Player::getCasualGameStatus()
 {
-    return current_match_;
+    return casual_match_;
 }
 
 
 void Player::changeCasualAct(string act)
 {
-    current_match_.act = act;
+    casual_match_.act = act;
 }
 
 
@@ -131,11 +131,11 @@ void Player::performAction(string act)
 {
     if(act == "shoot")
     {
-        current_match_.bullets -= 1;
+        casual_match_.bullets -= 1;
     }
     else if(act == "reload")
     {
-        current_match_.bullets += 1;
+        casual_match_.bullets += 1;
     }
 }
 
@@ -154,25 +154,25 @@ void Player::decreaseXP(double XP)
 
 void Player::addAct(string act)
 {
-    current_match_.actions.push_back(act);
+    casual_match_.actions.push_back(act);
 }
 
 
 string Player::getCurrentAct()
 {
-    return current_match_.act;
+    return casual_match_.act;
 }
 
 
 vector<string> Player::getActions()
 {
-    return current_match_.actions;
+    return casual_match_.actions;
 }
 
 
 int Player::getRemainingBullets()
 {
-    return current_match_.bullets;
+    return casual_match_.bullets;
 }
 
 
