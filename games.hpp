@@ -14,8 +14,11 @@ public:
     }
     string getInviter();
     string getInvited();
+    string getWinner();
+    string getLoser();
     void finishGame();
     void matchOutcome(string winner, string loser);
+    bool isFinished();
 private:
     string inviter_;
     string invited_;

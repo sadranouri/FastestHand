@@ -14,6 +14,7 @@ public:
     };
     void increaseTurnNumber();
     void decreaseTurnNumber();
+    int getTurnNumber();
 private:
     int turn_number_ = 1;
 };

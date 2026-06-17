@@ -59,7 +59,7 @@ public:
     void casualPerformAction(Casual *match, string act);
     void casualDefend(Casual *match, Player* current_player, Player* other_player);
     void matchStatus();
-    void matchStatusOutput(Player current_player, Player other_player, Invitation match);
+    void matchStatusOutput(Player current_player, Player other_player, Casual match);
     void report();
     void profile();
     void myProfile();
@@ -84,8 +84,8 @@ public:
     bool usernameNotFound(string username);
     bool adminUsername(string username);
     bool invitedPlayerBlockedYou(string invited);
-    int totalWins(string username);
-    int totalLosses(string username);
+    int totalCasualWins(string username);
+    int totalCasualLosses(string username);
     double casualXP(Player winner, Player loser);
     map<string, string> FastestHand::parseArguments();
     vector<Player> inOrderReadyPlayers(string order_type);

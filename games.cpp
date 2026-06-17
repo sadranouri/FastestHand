@@ -26,3 +26,21 @@ void Game::matchOutcome(string winner, string loser)
     winner_ = winner;
     loser_ = loser;
 }
+
+
+bool Game::isFinished()
+{
+    return isFinished_;
+}
+
+
+string Game::getWinner()
+{
+    return winner_;
+}
+
+
+string Game::getLoser()
+{
+    return loser_;
+}

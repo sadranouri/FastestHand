@@ -879,11 +879,11 @@ void FastestHand::action()
 
     if(typeid(*match_it) == typeid(Casual))
     {
-        casualPerformAction(&(*i_it), act);
+        casualPerformAction(&(*match_it), act);
     }
     else if(typeid(*match_it) == typeid(Ranked))
     {
-        rankedPerformAction(&(*i_it), act);
+        
     }
 
 }
@@ -1083,11 +1083,12 @@ void FastestHand::matchStatus()
         return;
     }
 
-    vector<Invitation>::iterator i_it = find_if(invitations.begin(), invitations.end(), [&](Invitation i){
-        return (i.invited == session.username || i.inviter == session.username) && i.isAccepted == true && i.isFinished == false;
+    vector<Casual>::iterator match_it = find_if(casual_matches.begin(), casual_matches.end(), [&](Casual c){
+        return (c.getInvited() == session.username || c.getInviter() == session.username) && c.isFinished() == false;
     });
 
-    if(i_it == invitations.end())
+
+    if(match_it == casual_matches.end())
     {
         cout << NOT_FOUND << endl;
         return;
@@ -1097,22 +1098,22 @@ void FastestHand::matchStatus()
 
     vector<Player>::iterator other_player;
 
-    if(i_it->invited == current_player->getUsername())
+    if(match_it->getInvited() == current_player->getUsername())
     {
-        other_player = findPlayerByUsername(i_it->inviter);
+        other_player = findPlayerByUsername(match_it->getInviter());
     }
-    else if(i_it->inviter == current_player->getUsername())
+    else if(match_it->getInviter() == current_player->getUsername())
     {
-        other_player = findPlayerByUsername(i_it->invited);
+        other_player = findPlayerByUsername(match_it->getInvited());
     }
 
-    matchStatusOutput((*current_player), (*other_player), (*i_it));
+    matchStatusOutput((*current_player), (*other_player), (*match_it));
 }
 
 
-void FastestHand::matchStatusOutput(Player current_player, Player other_player, Invitation match)
+void FastestHand::matchStatusOutput(Player current_player, Player other_player, Casual match)
 {
-    cout << "Turn " << match.turn_number << endl;
+    cout << "Turn " << match.getTurnNumber() << endl;
     if(current_player.getCurrentAct() == "")
     {
         cout << "You: pending" << endl;
@@ -1133,7 +1134,7 @@ void FastestHand::matchStatusOutput(Player current_player, Player other_player, 
 
     cout << "History:" << endl;
     cout << left << setw(20) << "Opponent's moves:" << "Your moves:" << endl;
-    if(match.turn_number != 1)
+    if(match.getTurnNumber() != 1)
     {
         for(int i = 0, j = 0; i < current_player.getActions().size(), j < other_player.getActions().size(); i++, j++)
         {
@@ -1265,8 +1266,8 @@ void FastestHand::myProfile()
 
     cout << "username: \"" << user_it->getUsername() << "\"" << endl;
     cout << "XP: " << user_it->getXP() << endl;
-    cout << "Total wins: " << totalWins(user_it->getUsername()) << endl;
-    cout << "Total losses: " << totalLosses(user_it->getUsername()) << endl; 
+    cout << "Total wins: " << totalCasualWins(user_it->getUsername()) << endl;
+    cout << "Total losses: " << totalCasualLosses(user_it->getUsername()) << endl; 
 }
 
 
@@ -1282,18 +1283,18 @@ void FastestHand::othersProfile(string username)
 
     cout << "username: \"" << user_it->getUsername() << "\"" << endl;
     cout << "XP: " << user_it->getXP() << endl;
-    cout << "Total wins: " << totalWins(user_it->getUsername()) << endl;
-    cout << "Total losses: " << totalLosses(user_it->getUsername()) << endl; 
+    cout << "Total wins: " << totalCasualWins(user_it->getUsername()) << endl;
+    cout << "Total losses: " << totalCasualLosses(user_it->getUsername()) << endl; 
 }
 
 
-int FastestHand::totalWins(string username)
+int FastestHand::totalCasualWins(string username)
 {
     int total_wins = 0;
 
-    for(Invitation match : Invitations)
+    for(Casual match : casual_matches)
     {
-        if(match.winner == username)
+        if(match.getWinner() == username)
         {
             total_wins++;
         }
@@ -1302,13 +1303,13 @@ int FastestHand::totalWins(string username)
 }
 
 
-int FastestHand::totalLosses(string username)
+int FastestHand::totalCasualLosses(string username)
 {
     int total_losses = 0;
 
-    for(Invitation match : invitations)
+    for(Casual match : casual_matches)
     {
-        if(match.loser == username)
+        if(match.getLoser() == username)
         {
             total_losses++;
         }
@@ -1346,7 +1347,7 @@ vector<Invitation> FastestHand::inOrderInvitations(string username)
 
     for(Invitation invite : invitations)
     {
-        if(invite.invited == username && invite.isAccepted == false && invite.isRejected == false)
+        if(invite.invited == username)
         {
             in_order_invitations.push_back(invite);
         }

@@ -13,3 +13,9 @@ void Casual::decreaseTurnNumber()
 {
     turn_number_--;
 }
+
+
+int Casual::getTurnNumber()
+{
+    return turn_number_;
+}
