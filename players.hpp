@@ -15,6 +15,15 @@ struct CasualGame
 };
 
 
+struct RankedGame
+{
+    int bullets = 3;
+    int health = 3;
+    string act = "";
+    vector<string> actions;
+};
+
+
 
 class Player
 {
