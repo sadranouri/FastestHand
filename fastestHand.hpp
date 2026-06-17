@@ -23,8 +23,6 @@ struct Invitation
     string invited;
     int id;
     string match_type;
-    bool isAccepted = false;
-    bool isRejected = false;
 };
 
 
@@ -58,8 +56,8 @@ public:
     void startMatch();
     void rejectInvitation();
     void action();
-    void casualPerformAction(Invitation* invite, string act);
-    void casualDefend(Invitation* invite, Player* current_player, Player* other_player);
+    void casualPerformAction(Casual *match, string act);
+    void casualDefend(Casual *match, Player* current_player, Player* other_player);
     void matchStatus();
     void matchStatusOutput(Player current_player, Player other_player, Invitation match);
     void report();
@@ -73,14 +71,14 @@ public:
     void inviteCreator(string match_type, string invited);
     void block();
     void endCasualGame(Invitation *match, Player *winner, Player *loser);
-    void startCasualMatch(Player *player1, Player *player2);
-    void startRankedMatch(Player *player1, Player *player2);
+    void startCasualMatch(Player *inviter, Player *invited, int invitation_id);
+    void startRankedMatch(Player *inviter, Player *invited, int invitation_id);
     void rankedPerformAction(Invitation *invite, string act);
     void rankedShoot(Invitation *invite, Player *current_player, Player *other_player);
     void rankedReload(Invitation *invite, Player *current_player, Player *other_player);
     void rankedDefend(Invitation *invite, Player *current_player, Player *other_player);
-    bool casualShoot(Invitation* invite, Player* current_player, Player* other_player);
-    bool casualReload(Invitation* invite, Player* current_player, Player* other_player);
+    bool casualShoot(Casual *match, Player* current_player, Player* other_player);
+    bool casualReload(Casual *match, Player* current_player, Player* other_player);
     bool usernameAlreadyExists(string username);
     bool wrongPassword(string username, string password);
     bool usernameNotFound(string username);

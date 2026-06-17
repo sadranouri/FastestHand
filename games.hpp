@@ -12,6 +12,8 @@ public:
         invited_ = invited;
         invitation_id_ = invitation_id;
     }
+    string getInviter();
+    string getInvited();
 private:
     string inviter_;
     string invited_;

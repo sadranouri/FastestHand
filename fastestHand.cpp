@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <map>
 #include <iomanip>
+#include <typeinfo>
 #include "fastestHand.hpp"
 #include "players.hpp"
 #include "games.hpp"
@@ -733,12 +734,6 @@ void FastestHand::startMatch()
     }
 
 
-    if(i_it->isAccepted == true || i_it->isRejected == true)
-    {
-        cout << PERMISSION_DENIED << endl;
-        return;
-    }
-
     vector<Player>::iterator p1_it = findPlayerByUsername(i_it->inviter);
 
     vector<Player>::iterator p2_it = findPlayerByUsername(i_it->invited);
@@ -749,38 +744,46 @@ void FastestHand::startMatch()
         return;
     }
 
+    invitations.erase(remove_if(invitations.begin(), invitations.end(), [&](Invitation i){
+        return i.id == invitation_id;
+    }));
+
     cout << OK << endl;
 
     if(i_it->match_type == CASUAL)
     {
-        startCasualMatch(&(*p1_it), &(*p2_it));
+        startCasualMatch(&(*p1_it), &(*p2_it), i_it->id);
     }
     else if(i_it->match_type == RANKED)
     {
-        startRankedMatch(&(*p1_it), &(*p2_it));
+        startRankedMatch(&(*p1_it), &(*p2_it), i_it->id);
     }
 }
 
 
-void FastestHand::startCasualMatch(Player *player1, Player *player2)
+void FastestHand::startCasualMatch(Player *inviter, Player *invited, int invitation_id)
 {
-    player1->changeMatchType(CASUAL);
-    player1->changePlayingStatus(true);
-    player2->changeMatchType(CASUAL);
-    player2->changePlayingStatus(true);
-    player1->startCasualGame();
-    player2->startCasualGame();
+    Casual newCasualMatch(inviter->getUsername(), invited->getUsername(), invitation_id);
+    casual_matches.push_back(newCasualMatch);
+    inviter->changeMatchType(CASUAL);
+    inviter->changePlayingStatus(true);
+    invited->changeMatchType(CASUAL);
+    invited->changePlayingStatus(true);
+    inviter->startCasualGame();
+    invited->startCasualGame();
 }
 
 
-void FastestHand::startRankedMatch(Player *player1, Player *player2)
+void FastestHand::startRankedMatch(Player *inviter, Player *invited, int invitation_id)
 {
-    player1->changeMatchType(RANKED);
-    player1->changePlayingStatus(true);
-    player2->changeMatchType(RANKED);
-    player2->changePlayingStatus(true);
-    player1->startRankedGame();
-    player2->startRankedGame();
+    Ranked newRankedMatch(inviter->getUsername(), invited->getUsername(), invitation_id);
+    ranked_matches.push_back(newRankedMatch);
+    inviter->changeMatchType(RANKED);
+    inviter->changePlayingStatus(true);
+    invited->changeMatchType(RANKED);
+    invited->changePlayingStatus(true);
+    inviter->startRankedGame();
+    invited->startRankedGame();
 }
 
 
@@ -831,14 +834,12 @@ void FastestHand::rejectInvitation()
         return;
     }
 
-    if(i_it->isAccepted == true || i_it->isRejected == true || i_it->isFinished == true)
-    {
-        cout << NOT_FOUND << endl;
-        return;
-    }
 
     cout << OK << endl;
-    i_it->isRejected = true;
+    
+    invitations.erase(remove_if(invitations.begin(), invitations.end(), [&](Invitation i){
+        return i.id == invitation_id;
+    }));
 }
 
 
@@ -866,23 +867,21 @@ void FastestHand::action()
     }
 
 
-    vector<Invitation>::iterator i_it = find_if(invitations.begin(), invitations.end(), [&](Invitation i){
-        return i.isAccepted == true && (i.invited == session.username || i.inviter == session.username);
+    vector<Casual>::iterator match_it = find_if(casual_matches.begin(), casual_matches.end(), [&](Casual c){
+        return (c.getInviter() == session.username || c.getInvited() == session.username);
     });
 
-
-    if(i_it == invitations.end())
+    if(match_it == casual_matches.end())
     {
         cout << NOT_FOUND << endl;
         return;
     }
 
-    if(i_it->match_type == CASUAL)
+    if(typeid(*match_it) == typeid(Casual))
     {
-    
         casualPerformAction(&(*i_it), act);
     }
-    else if(i_it->match_type == RANKED)
+    else if(typeid(*match_it) == typeid(Ranked))
     {
         rankedPerformAction(&(*i_it), act);
     }
@@ -890,19 +889,18 @@ void FastestHand::action()
 }
 
 
-void FastestHand::casualPerformAction(Invitation* invite, string act)
+void FastestHand::casualPerformAction(Casual *match, string act)
 {
     vector<Player>::iterator current_player = findPlayerByUsername(session.username);
-
 
     if(current_player->getCurrentAct().size() != 0)
     {
         cout << PERMISSION_DENIED << endl;
         return;
     }
-    if(invite->invited == current_player->getUsername())
+    if(match->getInvited() == current_player->getUsername())
     {
-        vector<Player>::iterator other_player = findPlayerByUsername(invite->inviter);
+        vector<Player>::iterator other_player = findPlayerByUsername(match->getInviter());
 
         if(act == SHOOT)
         {
@@ -974,7 +972,7 @@ void FastestHand::endCasualGame(Invitation *match, Player *winner, Player *loser
 }
 
 
-bool FastestHand::casualShoot(Invitation* invite, Player* current_player, Player* other_player)
+bool FastestHand::casualShoot(Casual *match, Player* current_player, Player* other_player)
 {
     current_player->performAction(SHOOT);
     if(other_player->getCasualGameStatus().act == "")
@@ -986,7 +984,7 @@ bool FastestHand::casualShoot(Invitation* invite, Player* current_player, Player
     current_player->addAct(SHOOT);
     current_player->changeCasualAct("");
     other_player->changeCasualAct("");
-    invite->turn_number++;
+    match->increaseTurnNumber();
 
     if(other_player->getCasualGameStatus().act == SHOOT)
     {
@@ -1001,14 +999,14 @@ bool FastestHand::casualShoot(Invitation* invite, Player* current_player, Player
     else if(other_player->getCasualGameStatus().act == RELOAD)
     {
         other_player->addAct(RELOAD);
-        invite->turn_number--;
+        match->decreaseTurnNumber();
         return true;
     }
     return false;
 }
 
 
-bool FastestHand::casualReload(Invitation* invite, Player* current_player, Player* other_player)
+bool FastestHand::casualReload(Casual *match, Player* current_player, Player* other_player)
 {
     current_player->performAction(RELOAD);
     if(other_player->getCasualGameStatus().act == "")
@@ -1020,7 +1018,7 @@ bool FastestHand::casualReload(Invitation* invite, Player* current_player, Playe
     current_player->addAct(RELOAD);
     current_player->changeCasualAct("");
     other_player->changeCasualAct("");
-    invite->turn_number++;
+    match->increaseTurnNumber();
 
     if(other_player->getCasualGameStatus().act == RELOAD)
     {
@@ -1035,14 +1033,14 @@ bool FastestHand::casualReload(Invitation* invite, Player* current_player, Playe
     else if(other_player->getCasualGameStatus().act == SHOOT)
     {
         other_player->addAct(SHOOT);
-        invite->turn_number--;
+        match->decreaseTurnNumber();
         return false;
     }
     return false;
 }
 
 
-void FastestHand::casualDefend(Invitation* invite, Player* current_player, Player* other_player)
+void FastestHand::casualDefend(Casual *match, Player* current_player, Player* other_player)
 {
     if(other_player->getCasualGameStatus().act == "")
     {
@@ -1052,7 +1050,7 @@ void FastestHand::casualDefend(Invitation* invite, Player* current_player, Playe
     current_player->addAct(DEFEND);
     current_player->changeCasualAct("");
     other_player->changeCasualAct("");
-    invite->turn_number++;
+    match->increaseTurnNumber();
     
     if(other_player->getCasualGameStatus().act == SHOOT)
     {

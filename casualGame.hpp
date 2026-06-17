@@ -5,15 +5,17 @@
 using namespace std;
 
 
-class Casual : private Game
+class Casual : public Game
 {
 public:
     Casual(string inviter, string invited, int invitation_id) : Game(inviter, invited, invitation_id)
     {
 
     };
+    void increaseTurnNumber();
+    void decreaseTurnNumber();
 private:
-    int turn_number = 1;
+    int turn_number_ = 1;
 };
 
 #endif
