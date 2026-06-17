@@ -242,18 +242,22 @@ void FastestHand::get(string command)
 }
 
 
-void FastestHand::playerRegister()
-{
+map<string, string> FastestHand::parseArguments() {
     map<string, string> setArgs;
-    
     string rest_of_line;
     getline(cin, rest_of_line);
     istringstream iss(rest_of_line);
     string key, val;
-    while(iss >> key >> quoted(val))
-    {
+    while(iss >> key >> quoted(val)) {
         setArgs[key] = val;
     }
+    return setArgs;
+}
+
+
+void FastestHand::playerRegister()
+{
+    map<string, string> setArgs = parseArguments();
 
     string username;
     string password;
@@ -317,16 +321,7 @@ bool FastestHand::usernameAlreadyExists(string username)
 
 void FastestHand::login()
 {
-    map<string, string> setArgs;
-
-    string rest_of_line;
-    getline(cin, rest_of_line);
-    istringstream iss(rest_of_line);
-    string key, val;
-    while(iss >> key >> quoted(val))
-    {
-        setArgs[key] = val;
-    }
+    map<string, string> setArgs = parseArguments();
 
     string username;
     string password;
@@ -606,16 +601,7 @@ vector<Player> FastestHand::inOrderReadyPlayers(string order_type)
 
 void FastestHand::invitation()
 {
-    map<string, string> setArgs;
-
-    string rest_of_line;
-    getline(cin, rest_of_line);
-    istringstream iss(rest_of_line);
-    string key, val;
-    while(iss >> key >> quoted(val))
-    {
-        setArgs[key] = val;
-    }
+    map<string, string> setArgs = parseArguments();
 
     string username;
     string match_type;
@@ -1180,16 +1166,7 @@ void FastestHand::matchStatusOutput(Player current_player, Player other_player, 
 
 void FastestHand::report()
 {
-    map<string, string> setArgs;
-
-    string rest_of_line;
-    getline(cin, rest_of_line);
-    istringstream iss(rest_of_line);
-    string key, val;
-    while(iss >> key >> quoted(val))
-    {
-        setArgs[key] = val;
-    }
+    map<string, string> setArgs = parseArguments();
 
     string username;
     string reason;
@@ -1563,17 +1540,7 @@ void FastestHand::outputRankedPlayers(vector<Player> ranked_players)
 
 void FastestHand::block()
 {
-    map<string, string> setArgs;
-    string rest_of_line;
-    getline(cin, rest_of_line);
-    
-    string key;
-    string val;
-    istringstream iss(rest_of_line);
-    while(iss >> key >> quoted(val))
-    {
-        setArgs[key] = val;
-    }
+    map<string, string> setArgs = parseArguments();
 
     map<string, string>::iterator u_it = find_if(setArgs.begin(), setArgs.end(), [](pair<string, string> p){
         return p.first == "username";

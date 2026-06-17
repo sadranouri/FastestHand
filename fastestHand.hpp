@@ -83,6 +83,7 @@ public:
     int totalWins(string username);
     int totalLosses(string username);
     double casualXP(Player winner, Player loser);
+    map<string, string> FastestHand::parseArguments();
     vector<Player> inOrderReadyPlayers(string order_type);
     vector<Player> inOrderRankedPlayers(string order_type);
     vector<MatchInvitation> inOrderInvitations(string username);
