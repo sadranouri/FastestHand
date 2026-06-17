@@ -88,6 +88,8 @@ public:
     vector<Player> inOrderRankedPlayers(string order_type);
     vector<MatchInvitation> inOrderInvitations(string username);
     vector<Report> inOrderReports();
+    vector<Player>::iterator findPlayerByUsername(string username);
+    vector<Admin>::iterator findAdminByUsername(string username);
     vector<Player> players;
     vector<Admin> admins;
     vector<MatchInvitation> matchInvitations;

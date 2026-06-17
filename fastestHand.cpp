@@ -255,6 +255,22 @@ map<string, string> FastestHand::parseArguments() {
 }
 
 
+vector<Player>::iterator FastestHand::findPlayerByUsername(string username)
+{
+    return find_if(players.begin(), players.end(), [&](Player p){
+        return p.getUsername() == username;
+    });
+}
+
+
+vector<Admin>::iterator FastestHand::findAdminByUsername(string username)
+{
+    return find_if(admins.begin(), admins.end(), [&](Admin a){
+        return a.getUsername() == username;
+    });
+}
+
+
 void FastestHand::playerRegister()
 {
     map<string, string> setArgs = parseArguments();
@@ -300,13 +316,9 @@ void FastestHand::playerRegister()
 
 bool FastestHand::usernameAlreadyExists(string username)
 {
-    vector<Player>::iterator p_it = find_if(players.begin(), players.end(), [&](Player p){
-        return p.getUsername() == username;
-    });
+    vector<Player>::iterator p_it = findPlayerByUsername(username);
 
-    vector<Admin>::iterator a_it = find_if(admins.begin(), admins.end(), [&](Admin a){
-        return a.getUsername() == username;
-    });
+    vector<Admin>::iterator a_it = findAdminByUsername(username);
     
     if(p_it != players.end() || a_it != admins.end())
     {
@@ -361,13 +373,9 @@ void FastestHand::login()
         return;
     }
 
-    vector<Player>::iterator player_it = find_if(players.begin(), players.end(), [&](Player p){
-        return p.getUsername() == username;
-    });
+    vector<Player>::iterator player_it = findPlayerByUsername(username);
 
-    vector<Admin>::iterator admin_it = find_if(admins.begin(), admins.end(), [&](Admin a){
-        return a.getUsername() == username;
-    });
+    vector<Admin>::iterator admin_it = findAdminByUsername(username);
 
     if(player_it != players.end())
     {
@@ -399,13 +407,9 @@ void FastestHand::login()
 
 bool FastestHand::wrongPassword(string username, string password)
 {
-    vector<Player>::iterator p_it = find_if(players.begin(), players.end(), [&](Player p){
-        return p.getUsername() == username;
-    });
+    vector<Player>::iterator p_it = findPlayerByUsername(username);
 
-    vector<Admin>::iterator a_it = find_if(admins.begin(), admins.end(), [&](Admin a){
-        return a.getUsername() == username;
-    });
+    vector<Admin>::iterator a_it = findAdminByUsername(username);
 
     if(p_it != players.end())
     {
@@ -440,13 +444,9 @@ void FastestHand::logout()
         return;
     }
 
-    vector<Player>::iterator player_it = find_if(players.begin(), players.end(), [&](Player p){
-        return p.getUsername() == session.username;
-    });
+    vector<Player>::iterator player_it = findPlayerByUsername(session.username);
 
-    vector<Admin>::iterator admin_it = find_if(admins.begin(), admins.end(), [&](Admin a){
-        return a.getUsername() == session.username;
-    });
+    vector<Admin>::iterator admin_it = findAdminByUsername(session.username);
 
     if(player_it != players.end())
     {
@@ -488,9 +488,7 @@ void FastestHand::casualMatchReady()
         return;
     }
 
-    vector<Player>::iterator player_it = find_if(players.begin(), players.end(), [&](Player p){
-        return p.getUsername() == session.username;
-    });
+    vector<Player>::iterator player_it = findPlayerByUsername(session.username);
     
     if(arg2 == "true")
     {
@@ -635,9 +633,7 @@ void FastestHand::invitation()
     username = u_it->second;
     match_type = m_it->second;
 
-    vector<Admin>::iterator admin_it = find_if(admins.begin(), admins.end(), [&](Admin a){
-        return a.getUsername() == username;
-    });
+    vector<Admin>::iterator admin_it = findAdminByUsername(username);
 
     if(admin_it != admins.end())
     {
@@ -645,9 +641,7 @@ void FastestHand::invitation()
         return;
     }
 
-    vector<Player>::iterator player_it  = find_if(players.begin(), players.end(), [&](Player p){
-        return p.getUsername() == username;
-    });
+    vector<Player>::iterator player_it  = findPlayerByUsername(username);
 
     if(player_it == players.end())
     {
@@ -670,9 +664,7 @@ void FastestHand::invitation()
 
 bool FastestHand::invitedPlayerBlockedYou(string invited)
 {
-    vector<Player>::iterator invited_player = find_if(players.begin(), players.end(), [&](Player p){
-        return p.getUsername() == invited;
-    });
+    vector<Player>::iterator invited_player = findPlayerByUsername(invited);
 
     vector<string>::iterator blocked_player = find_if(invited_player->getBlockedPlayers().begin(), invited_player->getBlockedPlayers().end(), [&](string s){
         return s == session.username;
@@ -744,13 +736,9 @@ void FastestHand::startMatch()
         return;
     }
 
-    vector<Player>::iterator p1_it = find_if(players.begin(), players.end(), [&](Player p1){
-        return p1.getUsername() == i_it->inviter;
-    });
+    vector<Player>::iterator p1_it = findPlayerByUsername(i_it->inviter);
 
-    vector<Player>::iterator p2_it = find_if(players.begin(), players.end(), [&](Player p2){
-        return p2.getUsername() == i_it->invited;
-    });
+    vector<Player>::iterator p2_it = findPlayerByUsername(i_it->invited);
 
     if(p1_it->getPlayingStatus() == true || p2_it->getPlayingStatus() == true)
     {
@@ -870,9 +858,7 @@ void FastestHand::action()
 
 void FastestHand::performAction(MatchInvitation* invite, string act)
 {
-    vector<Player>::iterator current_player = find_if(players.begin(), players.end(), [&](Player p){
-        return p.getUsername() == session.username;
-    });
+    vector<Player>::iterator current_player = findPlayerByUsername(session.username);
 
 
     if(current_player->getCurrentAct().size() != 0)
@@ -882,9 +868,7 @@ void FastestHand::performAction(MatchInvitation* invite, string act)
     }
     if(invite->invited == current_player->getUsername())
     {
-        vector<Player>::iterator other_player = find_if(players.begin(), players.end(), [&](Player p){
-            return p.getUsername() == invite->inviter;
-        });
+        vector<Player>::iterator other_player = findPlayerByUsername(invite->inviter);
 
         if(act == SHOOT)
         {
@@ -926,9 +910,7 @@ void FastestHand::performAction(MatchInvitation* invite, string act)
     }
     else if(invite->inviter == current_player->getUsername())
     {
-        vector<Player>::iterator other_player = find_if(players.begin(), players.end(), [&](Player p){
-            return p.getUsername() == invite->invited;
-        });
+        vector<Player>::iterator other_player = findPlayerByUsername(invite->invited);
 
         if(act == SHOOT)
         {
@@ -1107,23 +1089,17 @@ void FastestHand::matchStatus()
         return;
     }
 
-    vector<Player>::iterator current_player = find_if(players.begin(), players.end(), [&](Player p){
-        return p.getUsername() == session.username;
-    });
+    vector<Player>::iterator current_player = findPlayerByUsername(session.username);
 
     vector<Player>::iterator other_player;
 
     if(i_it->invited == current_player->getUsername())
     {
-        other_player = find_if(players.begin(), players.end(), [&](Player p){
-            return p.getUsername() == i_it->inviter;
-        });
+        other_player = findPlayerByUsername(i_it->inviter);
     }
     else if(i_it->inviter == current_player->getUsername())
     {
-        other_player = find_if(players.begin(), players.end(), [&](Player p){
-            return p.getUsername() == i_it->invited;
-        });
+        other_player = findPlayerByUsername(i_it->invited);
     }
 
     matchStatusOutput((*current_player), (*other_player), (*i_it));
@@ -1195,9 +1171,7 @@ void FastestHand::report()
     username = u_it->second;
     reason = r_it->second;
 
-    vector<Player>::iterator p_it = find_if(players.begin(), players.end(), [&](Player p){
-        return p.getUsername() == username;
-    });
+    vector<Player>::iterator p_it = findPlayerByUsername(username);
 
     if(p_it == players.end())
     {
@@ -1267,9 +1241,7 @@ void FastestHand::profile()
             return;
         }
 
-        vector<Admin>::iterator admin_it = find_if(admins.begin(), admins.end(), [&](Admin a){
-            return a.getUsername() == username;
-        });
+        vector<Admin>::iterator admin_it = findAdminByUsername(username);
 
         if(admin_it != admins.end())
         {
@@ -1285,9 +1257,7 @@ void FastestHand::profile()
 
 void FastestHand::myProfile()
 {
-    vector<Player>::iterator user_it = find_if(players.begin(), players.end(), [&](Player p){
-        return p.getUsername() == session.username;
-    });
+    vector<Player>::iterator user_it = findPlayerByUsername(session.username);
 
     cout << "username: \"" << user_it->getUsername() << "\"" << endl;
     cout << "XP: " << user_it->getXP() << endl;
@@ -1298,9 +1268,7 @@ void FastestHand::myProfile()
 
 void FastestHand::othersProfile(string username)
 {
-    vector<Player>::iterator user_it = find_if(players.begin(), players.end(), [&](Player p){
-        return p.getUsername() == username;
-    });
+    vector<Player>::iterator user_it = findPlayerByUsername(username);
 
     if(user_it == players.end())
     {
@@ -1485,9 +1453,7 @@ void FastestHand::rankedMatchOpponents()
 
 vector<Player> FastestHand::inOrderRankedPlayers(string order_type)
 {
-    vector<Player>::iterator current_user = find_if(players.begin(), players.end(), [&](Player p){
-        return p.getUsername() == session.username;
-    });
+    vector<Player>::iterator current_user = findPlayerByUsername(session.username);
 
     vector<Player> in_order_players;
     
@@ -1585,9 +1551,7 @@ void FastestHand::block()
 
     cout << OK << endl;
 
-    vector<Player>::iterator current_user = find_if(players.begin(), players.end(), [&](Player p){
-        return p.getUsername() == session.username;
-    });
+    vector<Player>::iterator current_user = findPlayerByUsername(session.username);
 
     current_user->blockPlayer(username);
 }
@@ -1595,9 +1559,7 @@ void FastestHand::block()
 
 bool FastestHand::usernameNotFound(string username)
 {
-    vector<Player>::iterator player_it = find_if(players.begin(), players.end(), [&](Player p){
-        return p.getUsername() == username;
-    });
+    vector<Player>::iterator player_it = findPlayerByUsername(username);
 
     if(player_it == players.end())
     {
@@ -1608,9 +1570,7 @@ bool FastestHand::usernameNotFound(string username)
 
 bool FastestHand::adminUsername(string username)
 {
-    vector<Admin>::iterator admin_it = find_if(admins.begin(), admins.end(), [&](Admin a){
-        return a.getUsername() == username;
-    });
+    vector<Admin>::iterator admin_it = findAdminByUsername(username);
 
     if(admin_it != admins.end())
     {
