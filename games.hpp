@@ -14,13 +14,15 @@ public:
     }
     string getInviter();
     string getInvited();
+    void finishGame();
+    void matchOutcome(string winner, string loser);
 private:
     string inviter_;
     string invited_;
     int invitation_id_;
-    bool isFinished = false;
-    string winner = "";
-    string loser = "";
+    bool isFinished_ = false;
+    string winner_ = "";
+    string loser_ = "";
 };
 
 #endif

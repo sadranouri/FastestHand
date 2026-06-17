@@ -909,26 +909,26 @@ void FastestHand::casualPerformAction(Casual *match, string act)
                 cout << BAD_REQUEST << endl;
                 return;
             }
-            if(casualShoot(invite, &(*current_player), &(*other_player)))
+            if(casualShoot(match, &(*current_player), &(*other_player)))
             {
-                endCasualGame(invite, &(*current_player), &(*other_player));
+                finishCasualGame(match, &(*current_player), &(*other_player));
             }
         }
         else if(act == RELOAD)
         {
-            if(!casualReload(invite, &(*current_player), &(*other_player)))
+            if(!casualReload(match, &(*current_player), &(*other_player)))
             {
-                endCasualGame(invite, &(*other_player), &(*current_player));
+                finishCasualGame(match, &(*other_player), &(*current_player));
             }
         }
         else if(act == DEFEND)
         {
-            casualDefend(invite, &(*current_player), &(*other_player));
+            casualDefend(match, &(*current_player), &(*other_player));
         }
     }
-    else if(invite->inviter == current_player->getUsername())
+    else if(match->getInviter() == current_player->getUsername())
     {
-        vector<Player>::iterator other_player = findPlayerByUsername(invite->invited);
+        vector<Player>::iterator other_player = findPlayerByUsername(match->getInvited());
 
         if(act == SHOOT)
         {
@@ -937,21 +937,21 @@ void FastestHand::casualPerformAction(Casual *match, string act)
                 cout << BAD_REQUEST << endl;
                 return;
             }
-            if(casualShoot(invite, &(*current_player), &(*other_player)))
+            if(casualShoot(match, &(*current_player), &(*other_player)))
             {
-                endCasualGame(invite, &(*current_player), &(*other_player));
+                finishCasualGame(match, &(*current_player), &(*other_player));
             }
         }
         else if(act == RELOAD)
         {
-            if(!casualReload(invite, &(*current_player), &(*other_player)))
+            if(!casualReload(match, &(*current_player), &(*other_player)))
             {
-                endCasualGame(invite, &(*other_player), &(*current_player));
+                finishCasualGame(match, &(*other_player), &(*current_player));
             }
         }
         else if(act == DEFEND)
         {
-            casualDefend(invite, &(*current_player), &(*other_player));
+            casualDefend(match, &(*current_player), &(*other_player));
         }
     }
     cout << OK << endl;
@@ -959,11 +959,10 @@ void FastestHand::casualPerformAction(Casual *match, string act)
 }
 
 
-void FastestHand::endCasualGame(Invitation *match, Player *winner, Player *loser)
+void FastestHand::finishCasualGame(Casual *match, Player *winner, Player *loser)
 {
-    match->isFinished = true;
-    match->winner = winner->getUsername();
-    match->loser = loser->getUsername();
+    match->finishGame();
+    match->matchOutcome(winner->getUsername(), loser->getUsername());
     double match_xp = casualXP(*winner, *loser);
     winner->increaseXP(match_xp);
     loser->decreaseXP(match_xp);

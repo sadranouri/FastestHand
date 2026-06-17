@@ -13,3 +13,16 @@ string Game::getInvited()
 {
     return invited_;
 }
+
+
+void Game::finishGame()
+{
+    isFinished_ = true;
+}
+
+
+void Game::matchOutcome(string winner, string loser)
+{
+    winner_ = winner;
+    loser_ = loser;
+}

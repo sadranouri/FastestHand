@@ -70,7 +70,7 @@ public:
     void outputRankedPlayers(vector<Player> ranked_players);
     void inviteCreator(string match_type, string invited);
     void block();
-    void endCasualGame(Invitation *match, Player *winner, Player *loser);
+    void finishCasualGame(Casual *match, Player *winner, Player *loser);
     void startCasualMatch(Player *inviter, Player *invited, int invitation_id);
     void startRankedMatch(Player *inviter, Player *invited, int invitation_id);
     void rankedPerformAction(Invitation *invite, string act);
