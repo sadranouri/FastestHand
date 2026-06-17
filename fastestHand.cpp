@@ -8,6 +8,9 @@
 #include <iomanip>
 #include "fastestHand.hpp"
 #include "players.hpp"
+#include "games.hpp"
+#include "casualGame.hpp"
+#include "rankedGame.hpp"
 #define POST "POST"
 #define GET "GET"
 #define PUT "PUT"
@@ -680,12 +683,12 @@ bool FastestHand::invitedPlayerBlockedYou(string invited)
 
 void FastestHand::inviteCreator(string match_type, string invited)
 {
-    MatchInvitation newInvitation;
+    Invitation newInvitation;
     newInvitation.inviter = session.username;
     newInvitation.invited = invited;
     newInvitation.match_type = match_type;
     newInvitation.id = invitation_id_;
-    matchInvitations.push_back(newInvitation);
+    invitations.push_back(newInvitation);
     invitation_id_++;
 }
 
@@ -712,8 +715,8 @@ void FastestHand::startMatch()
         return;
     }
 
-    vector<MatchInvitation>::iterator i_it = find_if(matchInvitations.begin(), matchInvitations.end(), [&](MatchInvitation i){
-        return i.id == invitation_id && i.isFinished == false;
+    vector<Invitation>::iterator i_it = find_if(invitations.begin(), invitations.end(), [&](Invitation i){
+        return i.id == invitation_id;
     });
 
 
@@ -723,7 +726,7 @@ void FastestHand::startMatch()
         return;
     }
 
-    if(i_it == matchInvitations.end())
+    if(i_it == invitations.end())
     {
         cout << NOT_FOUND << endl;
         return;
@@ -750,16 +753,16 @@ void FastestHand::startMatch()
 
     if(i_it->match_type == CASUAL)
     {
-    startCasualMatch(&(*i_it), &(*p1_it), &(*p2_it));
+        startCasualMatch(&(*i_it), &(*p1_it), &(*p2_it));
     }
     else if(i_it->match_type == RANKED)
     {
-        startRankedGame(&(*i_it), &(*p1_it), &(*p2_it));
+        startRankedMatch(&(*i_it), &(*p1_it), &(*p2_it));
     }
 }
 
 
-void FastestHand::startCasualMatch(MatchInvitation *match, Player *player1, Player *player2)
+void FastestHand::startCasualMatch(Invitation *match, Player *player1, Player *player2)
 {
     player1->changeMatchType(CASUAL);
     player1->changePlayingStatus(true);
@@ -770,7 +773,7 @@ void FastestHand::startCasualMatch(MatchInvitation *match, Player *player1, Play
 }
 
 
-void FastestHand::startRankedGame(MatchInvitation *match, Player *player1, Player *player2)
+void FastestHand::startRankedMatch(invitation *match, Player *player1, Player *player2)
 {
     player1->changeMatchType(RANKED);
     player1->changePlayingStatus(true);
