@@ -879,28 +879,14 @@ void FastestHand::performAction(MatchInvitation* invite, string act)
             }
             if(casualShoot(invite, &(*current_player), &(*other_player)))
             {
-                invite->isFinished = true;
-                invite->winner = current_player->getUsername();
-                invite->loser = other_player->getUsername();
-                double match_xp = casualXP((*current_player), (*other_player));
-                current_player->increaseXP(match_xp);
-                other_player->decreaseXP(match_xp);
-                current_player->endCasualGame();
-                other_player->endCasualGame();
+                endCasualGame(invite, &(*current_player), &(*other_player));
             }
         }
         else if(act == RELOAD)
         {
             if(!casualReload(invite, &(*current_player), &(*other_player)))
             {
-                invite->isFinished = true;
-                invite->winner = other_player->getUsername();
-                invite->loser = current_player->getUsername();
-                double match_xp = casualXP((*current_player), (*other_player));
-                current_player->decreaseXP(match_xp);
-                other_player->increaseXP(match_xp);
-                current_player->endCasualGame();
-                other_player->endCasualGame();
+                endCasualGame(invite, &(*other_player), &(*current_player));
             }
         }
         else if(act == DEFEND)
@@ -921,28 +907,14 @@ void FastestHand::performAction(MatchInvitation* invite, string act)
             }
             if(casualShoot(invite, &(*current_player), &(*other_player)))
             {
-                invite->isFinished = true;
-                invite->winner = current_player->getUsername();
-                invite->loser = other_player->getUsername();
-                double match_xp = casualXP((*current_player), (*other_player));
-                current_player->increaseXP(match_xp);
-                other_player->decreaseXP(match_xp);
-                current_player->endCasualGame();
-                other_player->endCasualGame();
+                endCasualGame(invite, &(*current_player), &(*other_player));
             }
         }
         else if(act == RELOAD)
         {
             if(!casualReload(invite, &(*current_player), &(*other_player)))
             {
-                invite->isFinished = true;
-                invite->winner = other_player->getUsername();
-                invite->loser = current_player->getUsername();
-                double match_xp = casualXP((*current_player), (*other_player));
-                current_player->decreaseXP(match_xp);
-                other_player->increaseXP(match_xp);
-                current_player->endCasualGame();
-                other_player->endCasualGame();
+                endCasualGame(invite, &(*other_player), &(*current_player));
             }
         }
         else if(act == DEFEND)
@@ -952,6 +924,19 @@ void FastestHand::performAction(MatchInvitation* invite, string act)
     }
     cout << OK << endl;
 
+}
+
+
+void FastestHand::endCasualGame(MatchInvitation *match, Player *winner, Player *loser)
+{
+    match->isFinished = true;
+    match->winner = winner->getUsername();
+    match->loser = loser->getUsername();
+    double match_xp = casualXP(*winner, *loser);
+    winner->increaseXP(match_xp);
+    loser->decreaseXP(match_xp);
+    winner->endCasualGame();
+    loser->endCasualGame();
 }
 
 

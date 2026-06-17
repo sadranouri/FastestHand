@@ -73,6 +73,7 @@ public:
     void outputRankedPlayers(vector<Player> ranked_players);
     void inviteCreator(string match_type, string invited);
     void block();
+    void endCasualGame(MatchInvitation *match, Player *winner, Player *loser);
     bool casualShoot(MatchInvitation* invite, Player* current_player, Player* other_player);
     bool casualReload(MatchInvitation* invite, Player* current_player, Player* other_player);
     bool usernameAlreadyExists(string username);
