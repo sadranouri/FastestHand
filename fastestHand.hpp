@@ -73,8 +73,8 @@ public:
     void inviteCreator(string match_type, string invited);
     void block();
     void endCasualGame(Invitation *match, Player *winner, Player *loser);
-    void startCasualMatch(Invitation *match, Player *player1, Player *player2);
-    void startRankedMatch(Invitation *match, Player *player1, Player *player2);
+    void startCasualMatch(Player *player1, Player *player2);
+    void startRankedMatch(Player *player1, Player *player2);
     void rankedPerformAction(Invitation *invite, string act);
     void rankedShoot(Invitation *invite, Player *current_player, Player *other_player);
     void rankedReload(Invitation *invite, Player *current_player, Player *other_player);
