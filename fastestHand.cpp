@@ -186,10 +186,6 @@ void FastestHand::post(string command)
     {
         casualMatchReady();
     }
-    else if(command == "casual_match_opponents")
-    {
-        casualMatchOpponents();
-    }
     else if(command == "invitation")
     {
         invitation();
@@ -213,6 +209,8 @@ void FastestHand::post(string command)
     else
     {
         cout << NOT_FOUND << endl;
+        string dummy;
+        getline(cin, dummy);
     }
 }
 
@@ -239,9 +237,15 @@ void FastestHand::get(string command)
     {
         rankedMatchOpponents();
     }
+    else if(command == "casual_match_opponents")
+    {
+        casualMatchOpponents();
+    }
     else
     {
         cout << NOT_FOUND << endl;
+        string dummy;
+        getline(cin, dummy);
     }
 }
 
@@ -315,6 +319,8 @@ void FastestHand::playerRegister()
     cout << OK << endl;
     Player newPlayer(username, password);
     players.push_back(newPlayer);
+    session.isPlayer = true;
+    session.username = username;
 }
 
 
@@ -442,6 +448,9 @@ bool FastestHand::wrongPassword(string username, string password)
 
 void FastestHand::logout()
 {
+    string dummy;
+    getline(cin, dummy);
+
     if(session.isPlayer == false && session.isAdmin == false)
     {
         cout << PERMISSION_DENIED << endl;
@@ -571,7 +580,7 @@ vector<Player> FastestHand::inOrderReadyPlayers(string order_type)
 
     for(auto player : players)
     {
-        if(player.getReadyStatus() == true)
+        if(player.getReadyStatus() == true && player.getUsername() != session.username)
         {
             in_order_players.push_back(player);
         }
@@ -883,7 +892,7 @@ void FastestHand::action()
     }
     else if(typeid(*match_it) == typeid(Ranked))
     {
-        
+        rankedPerformAction(&(*match_it), act);
     }
 
 }
@@ -973,12 +982,13 @@ void FastestHand::finishCasualGame(Casual *match, Player *winner, Player *loser)
 
 bool FastestHand::casualShoot(Casual *match, Player* current_player, Player* other_player)
 {
-    current_player->performAction(SHOOT);
     if(other_player->getCasualGameStatus().act == "")
     {
         current_player->changeCasualAct(SHOOT);
         return false;
     }
+    current_player->performAction(SHOOT);
+    other_player->performAction(other_player->getCasualGameStatus().act);
 
     current_player->addAct(SHOOT);
     current_player->changeCasualAct("");
@@ -1013,6 +1023,8 @@ bool FastestHand::casualReload(Casual *match, Player* current_player, Player* ot
         current_player->changeCasualAct(RELOAD);
         return true;
     }
+    current_player->performAction(RELOAD);
+    other_player->performAction(other_player->getCasualGameStatus().act);
 
     current_player->addAct(RELOAD);
     current_player->changeCasualAct("");
@@ -1045,6 +1057,7 @@ void FastestHand::casualDefend(Casual *match, Player* current_player, Player* ot
     {
         current_player->changeCasualAct(DEFEND);
     }
+    other_player->performAction(other_player->getCasualGameStatus().act);
     
     current_player->addAct(DEFEND);
     current_player->changeCasualAct("");
@@ -1585,7 +1598,7 @@ bool FastestHand::adminUsername(string username)
 }
 
 
-void FastestHand::rankedPerformAction(Invitation *invite, string act)
+void FastestHand::rankedPerformAction(Ranked *match, string act)
 {
     vector<Player>::iterator current_player = findPlayerByUsername(session.username);
 
@@ -1594,5 +1607,86 @@ void FastestHand::rankedPerformAction(Invitation *invite, string act)
         cout << PERMISSION_DENIED << endl;
         return;
     }
+
+    if(match->getInvited() == current_player->getUsername())
+    {
+        vector<Player>::iterator other_player = findPlayerByUsername(match->getInviter());
+
+        if(act == SHOOT)
+        {
+            if(current_player->getCasualGameStatus().bullets == 0)
+            {
+                cout << BAD_REQUEST << endl;
+                return;
+            }
+            if(rankedShoot(match, &(*current_player), &(*other_player)))
+            {
+                finishRankedGame(match, &(*current_player), &(*other_player));
+            }
+        }
+        else if(act == RELOAD)
+        {
+            if(!rankedReload(match, &(*current_player), &(*other_player)))
+            {
+                finishRankedGame(match, &(*other_player), &(*current_player));
+            }
+        }
+        else if(act == DEFEND)
+        {
+            rankedDefend(match, &(*current_player), &(*other_player));
+        }
+    }
+    else if(match->getInviter() == current_player->getUsername())
+    {
+        vector<Player>::iterator other_player = findPlayerByUsername(match->getInvited());
+
+        if(act == SHOOT)
+        {
+            if(current_player->getCasualGameStatus().bullets == 0)
+            {
+                cout << BAD_REQUEST << endl;
+                return;
+            }
+            if(rankedShoot(match, &(*current_player), &(*other_player)))
+            {
+                finishRankedGame(match, &(*current_player), &(*other_player));
+            }
+        }
+        else if(act == RELOAD)
+        {
+            if(!rankedReload(match, &(*current_player), &(*other_player)))
+            {
+                finishRankedGame(match, &(*other_player), &(*current_player));
+            }
+        }
+        else if(act == DEFEND)
+        {
+            rankedDefend(match, &(*current_player), &(*other_player));
+        }
+    }
+    cout << OK << endl;
+}
+
+
+void FastestHand::finishRankedGame(Ranked *match, Player *winner, Player *loser)
+{
     
+}
+
+
+bool FastestHand::rankedShoot(Ranked *match, Player *current_player, Player *other_player)
+{
+    
+}
+
+
+bool FastestHand::rankedReload(Ranked *match, Player *current_player, Player *other_player)
+{
+
+}
+
+
+void FastestHand::rankedDefend(Ranked *match, Player *current_player, Player *other_player)
+{
+
 }

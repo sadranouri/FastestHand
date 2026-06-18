@@ -71,12 +71,13 @@ public:
     void inviteCreator(string match_type, string invited);
     void block();
     void finishCasualGame(Casual *match, Player *winner, Player *loser);
+    void finishRankedGame(Ranked *match, Player *winner, Player *loser);
     void startCasualMatch(Player *inviter, Player *invited, int invitation_id);
     void startRankedMatch(Player *inviter, Player *invited, int invitation_id);
-    void rankedPerformAction(Invitation *invite, string act);
-    void rankedShoot(Invitation *invite, Player *current_player, Player *other_player);
-    void rankedReload(Invitation *invite, Player *current_player, Player *other_player);
-    void rankedDefend(Invitation *invite, Player *current_player, Player *other_player);
+    void rankedPerformAction(Ranked *match, string act);
+    void rankedDefend(Ranked *match, Player *current_player, Player *other_player);
+    bool rankedShoot(Ranked *match, Player *current_player, Player *other_player);
+    bool rankedReload(Ranked *match, Player *current_player, Player *other_player);
     bool casualShoot(Casual *match, Player* current_player, Player* other_player);
     bool casualReload(Casual *match, Player* current_player, Player* other_player);
     bool usernameAlreadyExists(string username);

@@ -5,7 +5,7 @@
 using namespace std;
 
 
-class Ranked : private Game
+class Ranked : public Game
 {
 public:
     Ranked(string inviter, string invited, int invitation_id) : Game(inviter, invited, invitation_id){

@@ -62,7 +62,7 @@ private:
     string password_;
     double XP_;
     double RP_;
-    string status_ = LOGGED_OUT;
+    string status_ = LOGGED_IN;
     bool casual_match_ready_ = false;
     bool is_playing_ = false;
     string match_type_ = "";
