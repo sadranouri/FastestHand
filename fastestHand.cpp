@@ -876,23 +876,27 @@ void FastestHand::action()
     }
 
 
-    vector<Casual>::iterator match_it = find_if(casual_matches.begin(), casual_matches.end(), [&](Casual c){
+    vector<Casual>::iterator casual_it = find_if(casual_matches.begin(), casual_matches.end(), [&](Casual c){
         return (c.getInviter() == session.username || c.getInvited() == session.username);
     });
 
-    if(match_it == casual_matches.end())
+    vector<Ranked>::iterator ranked_it = find_if(ranked_matches.begin(), ranked_matches.end(), [&](Ranked r){
+        return (r.getInviter() == session.username || r.getInvited() == session.username);
+    });
+
+    if(casual_it == casual_matches.end() && ranked_it == ranked_matches.end())
     {
         cout << NOT_FOUND << endl;
         return;
     }
 
-    if(typeid(*match_it) == typeid(Casual))
+    if(casual_it != casual_matches.end())
     {
-        casualPerformAction(&(*match_it), act);
+        casualPerformAction(&(*casual_it), act);
     }
-    else if(typeid(*match_it) == typeid(Ranked))
+    else if(ranked_it != ranked_matches.end())
     {
-        rankedPerformAction(&(*match_it), act);
+        rankedPerformAction(&(*ranked_it), act);
     }
 
 }
