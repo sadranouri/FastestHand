@@ -892,7 +892,18 @@ void FastestHand::action()
 
     if(casual_it != casual_matches.end())
     {
-        casualPerformAction(&(*casual_it), act);
+        Player* current_player = &(*findPlayerByUsername(session.username));
+        Player* other_player;
+
+        if(casual_it->getInvited() == current_player->getUsername())
+        {
+            other_player = &(*findPlayerByUsername(casual_it->getInviter()));
+        }
+        else
+        {
+            other_player = &(*findPlayerByUsername(casual_it->getInvited()));
+        }
+        casual_it->performAction(current_player, other_player, act);
     }
     else if(ranked_it != ranked_matches.end())
     {
@@ -901,75 +912,6 @@ void FastestHand::action()
 
 }
 
-
-void FastestHand::casualPerformAction(Casual *match, string act)
-{
-    vector<Player>::iterator current_player = findPlayerByUsername(session.username);
-
-    if(current_player->getCurrentAct().size() != 0)
-    {
-        cout << PERMISSION_DENIED << endl;
-        return;
-    }
-    if(match->getInvited() == current_player->getUsername())
-    {
-        vector<Player>::iterator other_player = findPlayerByUsername(match->getInviter());
-
-        if(act == SHOOT)
-        {
-            if(current_player->getCasualGameStatus().bullets == 0)
-            {
-                cout << BAD_REQUEST << endl;
-                return;
-            }
-            if(casualShoot(match, &(*current_player), &(*other_player)))
-            {
-                finishCasualGame(match, &(*current_player), &(*other_player));
-            }
-        }
-        else if(act == RELOAD)
-        {
-            if(!casualReload(match, &(*current_player), &(*other_player)))
-            {
-                finishCasualGame(match, &(*other_player), &(*current_player));
-            }
-        }
-        else if(act == DEFEND)
-        {
-            casualDefend(match, &(*current_player), &(*other_player));
-        }
-    }
-    else if(match->getInviter() == current_player->getUsername())
-    {
-        vector<Player>::iterator other_player = findPlayerByUsername(match->getInvited());
-
-        if(act == SHOOT)
-        {
-            if(current_player->getCasualGameStatus().bullets == 0)
-            {
-                cout << BAD_REQUEST << endl;
-                return;
-            }
-            if(casualShoot(match, &(*current_player), &(*other_player)))
-            {
-                finishCasualGame(match, &(*current_player), &(*other_player));
-            }
-        }
-        else if(act == RELOAD)
-        {
-            if(!casualReload(match, &(*current_player), &(*other_player)))
-            {
-                finishCasualGame(match, &(*other_player), &(*current_player));
-            }
-        }
-        else if(act == DEFEND)
-        {
-            casualDefend(match, &(*current_player), &(*other_player));
-        }
-    }
-    cout << OK << endl;
-
-}
 
 
 void FastestHand::finishCasualGame(Casual *match, Player *winner, Player *loser)

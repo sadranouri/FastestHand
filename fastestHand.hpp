@@ -56,7 +56,7 @@ public:
     void startMatch();
     void rejectInvitation();
     void action();
-    void casualPerformAction(Casual *match, string act);
+    void casualPerformAction(Casual *match, string act, Player *current_player, Player *other_player);
     void casualDefend(Casual *match, Player* current_player, Player* other_player);
     void matchStatus();
     void matchStatusOutput(Player current_player, Player other_player, Casual match);
