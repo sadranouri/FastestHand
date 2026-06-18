@@ -15,12 +15,13 @@ public:
     };
     void increaseTurnNumber();
     void decreaseTurnNumber();
-    int getTurnNumber();
     void performAction(Player *current_player, Player *other_player, string act);
-    void finishGame(Player *winner, Player *loser);
+    void finishMatch(Player *winner, Player *loser);
     void defend(Player *current_player, Player *other_player);
     bool shoot(Player *current_player, Player *other_player);
     bool reload(Player *current_player, Player *other_player);
+    double matchXP(Player winner, Player loser);
+    int getTurnNumber();
 private:
     int turn_number_ = 1;
 };
