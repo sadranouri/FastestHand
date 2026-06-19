@@ -6,6 +6,8 @@
 #define SILVER "silver"
 #define GOLD "gold"
 #define PLATINUM "platinum"
+#define CASUAL "casual"
+#define RANKED "ranked"
 using namespace std;
 
 
@@ -112,6 +114,14 @@ void Player::startCasualGame()
 void Player::endGame()
 {
     is_playing_ = false;
+    if(match_type_ == RANKED)
+    {
+        if(penalized_matches_ > 0)
+        {
+            penalized_matches_--;
+        }
+    }
+    match_type_ = "";
 }
 
 
@@ -224,6 +234,17 @@ vector<string> Player::getBlockedPlayers()
 void Player::startRankedGame()
 {
     ranked_match_ = RankedGame();
+    if(penalized_matches_ > 0)
+    {
+        if(penalty_type_ == "health_penalty")
+        {
+            ranked_match_.health -= peanlty_amount_;
+        }
+        else if(penalty_type_ == "bullet_penalty")
+        {
+            ranked_match_.bullets -= peanlty_amount_;
+        }
+    }
 }
 
 
