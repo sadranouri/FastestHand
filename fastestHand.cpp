@@ -206,6 +206,10 @@ void FastestHand::post(string command)
     {
         report();
     }
+    else if(command == "penalty")
+    {
+        penalty();
+    }
     else
     {
         cout << NOT_FOUND << endl;
@@ -907,7 +911,18 @@ void FastestHand::action()
     }
     else if(ranked_it != ranked_matches.end())
     {
-        rankedPerformAction(&(*ranked_it), act);
+        Player* current_player = &(*findPlayerByUsername(session.username));
+        Player* other_player;
+
+        if(ranked_it->getInvited() == current_player->getUsername())
+        {
+            other_player = &(*findPlayerByUsername(ranked_it->getInviter()));
+        }
+        else
+        {
+            other_player = &(*findPlayerByUsername(ranked_it->getInvited()));
+        }
+        ranked_it->performAction(current_player, other_player, act);
     }
 
 }
@@ -1418,6 +1433,73 @@ bool FastestHand::adminUsername(string username)
     if(admin_it != admins.end())
     {
         return true;
+    }
+    return false;
+}
+
+
+void FastestHand::penalty()
+{
+    map<string, string> setArgs = parseArguments();
+
+    if(session.isAdmin == false)
+    {
+        cout << PERMISSION_DENIED << endl;
+        return;
+    }
+
+    int report_id, amount, number_of_matches;
+    string type;
+    map<string, string>::iterator id_it = find_if(setArgs.begin(), setArgs.end(), [](pair<string, string> p){return p.first == "report_id";});
+    map<string, string>::iterator type_it = find_if(setArgs.begin(), setArgs.end(), [](pair<string, string> p){return p.first == "type";});
+    map<string, string>::iterator amount_it = find_if(setArgs.begin(), setArgs.end(), [](pair<string, string> p){return p.first == "amount";});
+    map<string, string>::iterator num_it = find_if(setArgs.begin(), setArgs.end(), [](pair<string, string> p){return p.first == "number_of_matches";});
+
+    if(id_it == setArgs.end() || type_it == setArgs.end() || amount_it == setArgs.end() || num_it == setArgs.end())
+    {
+        cout << BAD_REQUEST << endl;
+        return;
+    }
+
+    report_id = stoi(id_it->second);
+    type = type_it->second;
+    amount = stoi(amount_it->second);
+    number_of_matches = stoi(num_it->second);
+    if((type != "health_penalty" && type != "bullet_penalty") || outOfRangeAmount(type, amount) || number_of_matches < 1)
+    {
+        cout << BAD_REQUEST << endl;
+        return;
+    }
+
+    vector<Report>::iterator report_it = find_if(reports.begin(), reports.end(), [&](Report r){return r.id == report_id;});
+    if(report_it == reports.end())
+    {
+        cout << NOT_FOUND << endl;
+        return;
+    }
+    cout << OK << endl;
+    reports.erase(remove_if(reports.begin(), reports.end(), [&](Report r){return r.id == report_id;}));
+
+}
+
+
+bool FastestHand::outOfRangeAmount(string type, int amount)
+{
+    if(type == "health_panalty")
+    {
+        if(amount < 1 || amount > 2)
+        {
+            return true;
+        }
+        return false;
+    }
+    else if(type == "bullet_penalty")
+    {
+        if(amount < 1 || amount > 3)
+        {
+            return true;
+        }
+        return false;
     }
     return false;
 }

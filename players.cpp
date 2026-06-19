@@ -285,3 +285,29 @@ void Player::decreaseRP(double RP)
 {
     RP_ -= RP;
 }
+
+
+void Player::penalize(string type, int amount, int number_of_matches)
+{
+    penalty_type_ = type;
+    peanlty_amount_ = amount;
+    penalized_matches_ = number_of_matches;
+}
+
+
+string Player::getPeanltyType()
+{
+    return penalty_type_;
+}
+
+
+int Player::getPenaltyAmount()
+{
+    return peanlty_amount_;
+}
+
+
+int Player::getPenalizedMatches()
+{
+    return penalized_matches_;
+}
