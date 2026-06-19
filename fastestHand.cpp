@@ -290,13 +290,9 @@ void FastestHand::playerRegister()
     string username;
     string password;
 
-    map<string, string>::iterator u_it = find_if(setArgs.begin(), setArgs.end(), [](pair<string, string> p){
-        return p.first == "username";
-    });
+    map<string, string>::iterator u_it = find_if(setArgs.begin(), setArgs.end(), [](pair<string, string> p){return p.first == "username";});
 
-    map<string, string>::iterator p_it = find_if(setArgs.begin(), setArgs.end(), [](pair<string, string> p){
-        return p.first == "password";
-    });
+    map<string, string>::iterator p_it = find_if(setArgs.begin(), setArgs.end(), [](pair<string, string> p){return p.first == "password";});
 
     if(u_it == setArgs.end() || p_it == setArgs.end())
     {
@@ -352,13 +348,9 @@ void FastestHand::login()
     string username;
     string password;
 
-    map<string, string>::iterator u_it = find_if(setArgs.begin(), setArgs.end(), [](pair<string, string> p){
-        return p.first == "username";
-    });
+    map<string, string>::iterator u_it = find_if(setArgs.begin(), setArgs.end(), [](pair<string, string> p){return p.first == "username";});
 
-    map<string, string>::iterator p_it = find_if(setArgs.begin(), setArgs.end(), [](pair<string, string> p){
-        return p.first == "password";
-    });
+    map<string, string>::iterator p_it = find_if(setArgs.begin(), setArgs.end(), [](pair<string, string> p){return p.first == "password";});
 
     if(u_it == setArgs.end() || p_it == setArgs.end())
     {
@@ -621,13 +613,9 @@ void FastestHand::invitation()
     string username;
     string match_type;
 
-    map<string, string>::iterator u_it = find_if(setArgs.begin(), setArgs.end(), [](pair<string, string> u){
-        return u.first == "username";
-    });
+    map<string, string>::iterator u_it = find_if(setArgs.begin(), setArgs.end(), [](pair<string, string> u){return u.first == "username";});
 
-    map<string, string>::iterator m_it = find_if(setArgs.begin(), setArgs.end(), [](pair<string, string> m){
-        return m.first == "match_type";
-    });
+    map<string, string>::iterator m_it = find_if(setArgs.begin(), setArgs.end(), [](pair<string, string> m){return m.first == "match_type";});
 
     if(u_it == setArgs.end() || m_it == setArgs.end())
     {
@@ -683,9 +671,7 @@ bool FastestHand::invitedPlayerBlockedYou(string invited)
 {
     vector<Player>::iterator invited_player = findPlayerByUsername(invited);
 
-    vector<string>::iterator blocked_player = find_if(invited_player->getBlockedPlayers().begin(), invited_player->getBlockedPlayers().end(), [&](string s){
-        return s == session.username;
-    });
+    vector<string>::iterator blocked_player = find_if(invited_player->getBlockedPlayers().begin(), invited_player->getBlockedPlayers().end(), [&](string s){return s == session.username;});
 
     if(blocked_player != invited_player->getBlockedPlayers().end())
     {
@@ -729,9 +715,7 @@ void FastestHand::startMatch()
         return;
     }
 
-    vector<Invitation>::iterator i_it = find_if(invitations.begin(), invitations.end(), [&](Invitation i){
-        return i.id == invitation_id;
-    });
+    vector<Invitation>::iterator i_it = find_if(invitations.begin(), invitations.end(), [&](Invitation i){return i.id == invitation_id;});
 
 
     if(session.isPlayer == false || session.username != i_it->invited)
@@ -824,9 +808,7 @@ void FastestHand::rejectInvitation()
 
 
 
-    vector<Invitation>::iterator i_it = find_if(invitations.begin(), invitations.end(), [&](Invitation i){
-        return i.id == invitation_id;
-    });
+    vector<Invitation>::iterator i_it = find_if(invitations.begin(), invitations.end(), [&](Invitation i){return i.id == invitation_id;});
 
     if(session.isPlayer == false)
     {
@@ -880,13 +862,9 @@ void FastestHand::action()
     }
 
 
-    vector<Casual>::iterator casual_it = find_if(casual_matches.begin(), casual_matches.end(), [&](Casual c){
-        return (c.getInviter() == session.username || c.getInvited() == session.username);
-    });
+    vector<Casual>::iterator casual_it = find_if(casual_matches.begin(), casual_matches.end(), [&](Casual c){return (c.getInviter() == session.username || c.getInvited() == session.username);});
 
-    vector<Ranked>::iterator ranked_it = find_if(ranked_matches.begin(), ranked_matches.end(), [&](Ranked r){
-        return (r.getInviter() == session.username || r.getInvited() == session.username);
-    });
+    vector<Ranked>::iterator ranked_it = find_if(ranked_matches.begin(), ranked_matches.end(), [&](Ranked r){return (r.getInviter() == session.username || r.getInvited() == session.username);});
 
     if(casual_it == casual_matches.end() && ranked_it == ranked_matches.end())
     {
@@ -936,9 +914,7 @@ void FastestHand::matchStatus()
         return;
     }
 
-    vector<Casual>::iterator match_it = find_if(casual_matches.begin(), casual_matches.end(), [&](Casual c){
-        return (c.getInvited() == session.username || c.getInviter() == session.username) && c.isFinished() == false;
-    });
+    vector<Casual>::iterator match_it = find_if(casual_matches.begin(), casual_matches.end(), [&](Casual c){return (c.getInvited() == session.username || c.getInviter() == session.username) && c.isFinished() == false;});
 
 
     if(match_it == casual_matches.end())
@@ -1005,13 +981,9 @@ void FastestHand::report()
     string username;
     string reason;
 
-    map<string, string>::iterator u_it = find_if(setArgs.begin(), setArgs.end(), [](pair<string, string> p){
-        return p.first == "username";
-    });
+    map<string, string>::iterator u_it = find_if(setArgs.begin(), setArgs.end(), [](pair<string, string> p){return p.first == "username";});
 
-    map<string, string>::iterator r_it = find_if(setArgs.begin(), setArgs.end(), [](pair<string, string> p){
-        return p.first == "reason";
-    });
+    map<string, string>::iterator r_it = find_if(setArgs.begin(), setArgs.end(), [](pair<string, string> p){return p.first == "reason";});
 
 
     if(u_it == setArgs.end() || r_it == setArgs.end())
@@ -1366,13 +1338,9 @@ void FastestHand::block()
 {
     map<string, string> setArgs = parseArguments();
 
-    map<string, string>::iterator u_it = find_if(setArgs.begin(), setArgs.end(), [](pair<string, string> p){
-        return p.first == "username";
-    });
+    map<string, string>::iterator u_it = find_if(setArgs.begin(), setArgs.end(), [](pair<string, string> p){return p.first == "username";});
 
-    map<string, string>::iterator s_it = find_if(setArgs.begin(), setArgs.end(), [](pair<string, string> p){
-        return p.first == "status";
-    });
+    map<string, string>::iterator s_it = find_if(setArgs.begin(), setArgs.end(), [](pair<string, string> p){return p.first == "status";});
 
     if(u_it == setArgs.end() || s_it == setArgs.end())
     {
