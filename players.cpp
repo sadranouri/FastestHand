@@ -109,7 +109,7 @@ void Player::startCasualGame()
     casual_match_ = CasualGame();
 }
 
-void Player::endCasualGame()
+void Player::endGame()
 {
     is_playing_ = false;
 }
@@ -127,7 +127,7 @@ void Player::changeCasualAct(string act)
 }
 
 
-void Player::performAction(string act)
+void Player::performCasualAction(string act)
 {
     if(act == "shoot")
     {
@@ -152,13 +152,13 @@ void Player::decreaseXP(double XP)
 }
 
 
-void Player::addAct(string act)
+void Player::addCasualAct(string act)
 {
     casual_match_.actions.push_back(act);
 }
 
 
-string Player::getCurrentAct()
+string Player::getCurrentCasualAct()
 {
     return casual_match_.act;
 }
@@ -170,7 +170,7 @@ vector<string> Player::getActions()
 }
 
 
-int Player::getRemainingBullets()
+int Player::getRemainingCasualBullets()
 {
     return casual_match_.bullets;
 }
@@ -224,4 +224,64 @@ vector<string> Player::getBlockedPlayers()
 void Player::startRankedGame()
 {
     ranked_match_ = RankedGame();
+}
+
+
+string Player::getCurrentRankedAct()
+{
+    return ranked_match_.act;
+}
+
+
+RankedGame Player::getRankedGameStatus()
+{
+    return ranked_match_;
+}
+
+
+void Player::performRankedAction(string act)
+{
+    if(act == "shoot")
+    {
+        ranked_match_.bullets -= 1;
+    }
+    else if(act == "reload")
+    {
+        ranked_match_.bullets += 1;
+    }
+}
+
+
+void Player::addRankedAct(string act)
+{
+    ranked_match_.actions.push_back(act);
+}
+
+
+void Player::decreaseRankedHealth()
+{
+    ranked_match_.health--;
+}
+
+
+int Player::getCurrentRankedHealth()
+{
+    return ranked_match_.health;
+}
+
+
+void Player::changeRankedAct(string act)
+{
+    ranked_match_.act = act;
+}
+
+
+void Player::increaseRP(double RP, double health_bonus)
+{
+    RP_ += RP + health_bonus;
+}
+
+void Player::decreaseRP(double RP)
+{
+    RP_ -= RP;
 }

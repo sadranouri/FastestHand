@@ -31,7 +31,7 @@ int Casual::getTurnNumber()
 
 void Casual::performAction(Player *current_player, Player *other_player, string act)
 {
-    if(current_player->getCurrentAct().size() != 0)
+    if(current_player->getCurrentCasualAct().size() != 0)
     {
         cout << PERMISSION_DENIED << endl;
         return;
@@ -73,8 +73,8 @@ void Casual::finishMatch(Player *winner, Player *loser)
     double match_xp = matchXP(*winner, *loser);
     winner->increaseXP(match_xp);
     loser->decreaseXP(match_xp);
-    winner->endCasualGame();
-    loser->endCasualGame();
+    winner->endGame();
+    loser->endGame();
 }
 
 
@@ -93,27 +93,27 @@ bool Casual::shoot(Player *current_player, Player *other_player)
         current_player->changeCasualAct(SHOOT);
         return false;
     }
-    current_player->performAction(SHOOT);
-    other_player->performAction(other_player->getCasualGameStatus().act);
+    current_player->performCasualAction(SHOOT);
+    other_player->performRankedAction(other_player->getCasualGameStatus().act);
 
-    current_player->addAct(SHOOT);
+    current_player->addCasualAct(SHOOT);
     current_player->changeCasualAct("");
     other_player->changeCasualAct("");
     increaseTurnNumber();
 
     if(other_player->getCasualGameStatus().act == SHOOT)
     {
-        other_player->addAct(SHOOT);
+        other_player->addCasualAct(SHOOT);
         return false;
     }
     else if(other_player->getCasualGameStatus().act == DEFEND)
     {
-        other_player->addAct(DEFEND);
+        other_player->addCasualAct(DEFEND);
         return false;
     }
     else if(other_player->getCasualGameStatus().act == RELOAD)
     {
-        other_player->addAct(RELOAD);
+        other_player->addCasualAct(RELOAD);
         decreaseTurnNumber();
         return true;
     }
@@ -128,31 +128,31 @@ bool Casual::reload(Player *current_player, Player *other_player)
         current_player->changeCasualAct(RELOAD);
         return true;
     }
-    current_player->performAction(RELOAD);
-    other_player->performAction(other_player->getCasualGameStatus().act);
+    current_player->performCasualAction(RELOAD);
+    other_player->performCasualAction(other_player->getCasualGameStatus().act);
 
-    current_player->addAct(RELOAD);
+    current_player->addCasualAct(RELOAD);
     current_player->changeCasualAct("");
     other_player->changeCasualAct("");
     increaseTurnNumber();
 
     if(other_player->getCasualGameStatus().act == RELOAD)
     {
-        other_player->addAct(RELOAD);
+        other_player->addCasualAct(RELOAD);
         return true;
     }
     else if(other_player->getCasualGameStatus().act == DEFEND)
     {
-        other_player->addAct(DEFEND);
+        other_player->addCasualAct(DEFEND);
         return true;
     }
     else if(other_player->getCasualGameStatus().act == SHOOT)
     {
-        other_player->addAct(SHOOT);
+        other_player->addCasualAct(SHOOT);
         decreaseTurnNumber();
         return false;
     }
-    return false;
+    return true;
 }
 
 
@@ -162,23 +162,23 @@ void Casual::defend(Player *current_player, Player *other_player)
     {
         current_player->changeCasualAct(DEFEND);
     }
-    other_player->performAction(other_player->getCasualGameStatus().act);
+    other_player->performCasualAction(other_player->getCasualGameStatus().act);
     
-    current_player->addAct(DEFEND);
+    current_player->addCasualAct(DEFEND);
     current_player->changeCasualAct("");
     other_player->changeCasualAct("");
     increaseTurnNumber();
     
     if(other_player->getCasualGameStatus().act == SHOOT)
     {
-        other_player->addAct(SHOOT);
+        other_player->addCasualAct(SHOOT);
     }
     else if(other_player->getCasualGameStatus().act == RELOAD)
     {
-        other_player->addAct(RELOAD);
+        other_player->addCasualAct(RELOAD);
     }
     else if(other_player->getCasualGameStatus().act == DEFEND)
     {
-        other_player->addAct(DEFEND);
+        other_player->addCasualAct(DEFEND);
     }
 }
