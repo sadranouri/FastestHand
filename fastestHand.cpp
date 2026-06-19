@@ -210,6 +210,10 @@ void FastestHand::post(string command)
     {
         penalty();
     }
+    else if(command == "dismiss_report")
+    {
+        dismissReport();
+    }
     else
     {
         cout << NOT_FOUND << endl;
@@ -1470,4 +1474,38 @@ bool FastestHand::outOfRangeAmount(string type, int amount)
         return false;
     }
     return false;
+}
+
+
+void FastestHand::dismissReport()
+{
+    string rest_of_line;
+    getline(cin, rest_of_line);
+    istringstream iss(rest_of_line);
+    string arg1;
+    string str_report_id;
+    iss >> arg1 >> quoted(str_report_id);
+    int report_id = stoi(str_report_id);
+
+    if(arg1 != "report_id" || iss.fail())
+    {
+        cout << BAD_REQUEST << endl;
+        return;
+    }
+
+    if(session.isAdmin == false)
+    {
+        cout << PERMISSION_DENIED << endl;
+        return;
+    }
+
+    vector<Report>::iterator report_it = find_if(reports.begin(), reports.end(), [&](Report r){return r.id == report_id;});
+
+    if(report_it == reports.end())
+    {
+        cout << NOT_FOUND << endl;
+        return;
+    }
+    cout << OK << endl;
+    reports.erase(remove_if(reports.begin(), reports.end(), [&](Report r){return r.id == report_id;}));
 }

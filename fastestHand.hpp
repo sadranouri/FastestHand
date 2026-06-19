@@ -71,6 +71,7 @@ public:
     void startCasualMatch(Player *inviter, Player *invited, int invitation_id);
     void startRankedMatch(Player *inviter, Player *invited, int invitation_id);
     void penalty();
+    void dismissReport();
     bool usernameAlreadyExists(string username);
     bool wrongPassword(string username, string password);
     bool usernameNotFound(string username);
