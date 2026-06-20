@@ -1094,9 +1094,11 @@ void FastestHand::myProfile()
     vector<Player>::iterator user_it = findPlayerByUsername(session.username);
 
     cout << "username: \"" << user_it->getUsername() << "\"" << endl;
+    cout << "Level: " << user_it->getRankedLevel() << endl;
+    cout << "RP: " << user_it->getRP() << endl;
     cout << "XP: " << user_it->getXP() << endl;
-    cout << "Total wins: " << totalCasualWins(user_it->getUsername()) << endl;
-    cout << "Total losses: " << totalCasualLosses(user_it->getUsername()) << endl; 
+    cout << "Total wins: " << totalWins(user_it->getUsername()) << endl;
+    cout << "Total losses: " << totalLosses(user_it->getUsername()) << endl; 
 }
 
 
@@ -1112,12 +1114,12 @@ void FastestHand::othersProfile(string username)
 
     cout << "username: \"" << user_it->getUsername() << "\"" << endl;
     cout << "XP: " << user_it->getXP() << endl;
-    cout << "Total wins: " << totalCasualWins(user_it->getUsername()) << endl;
-    cout << "Total losses: " << totalCasualLosses(user_it->getUsername()) << endl; 
+    cout << "Total wins: " << totalWins(user_it->getUsername()) << endl;
+    cout << "Total losses: " << totalLosses(user_it->getUsername()) << endl; 
 }
 
 
-int FastestHand::totalCasualWins(string username)
+int FastestHand::totalWins(string username)
 {
     int total_wins = 0;
 
@@ -1128,15 +1130,31 @@ int FastestHand::totalCasualWins(string username)
             total_wins++;
         }
     }
+
+    for(Ranked match : ranked_matches)
+    {
+        if(match.getWinner() == username)
+        {
+            total_wins++;
+        }
+    }
     return total_wins;
 }
 
 
-int FastestHand::totalCasualLosses(string username)
+int FastestHand::totalLosses(string username)
 {
     int total_losses = 0;
 
     for(Casual match : casual_matches)
+    {
+        if(match.getLoser() == username)
+        {
+            total_losses++;
+        }
+    }
+
+    for(Ranked match : ranked_matches)
     {
         if(match.getLoser() == username)
         {

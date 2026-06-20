@@ -78,8 +78,8 @@ public:
     bool adminUsername(string username);
     bool invitedPlayerBlockedYou(string invited);
     bool outOfRangeAmount(string type, int amount);
-    int totalCasualWins(string username);
-    int totalCasualLosses(string username);
+    int totalWins(string username);
+    int totalLosses(string username);
     map<string, string> FastestHand::parseArguments();
     vector<Player> inOrderReadyPlayers(string order_type);
     vector<Player> inOrderRankedPlayers(string order_type);
