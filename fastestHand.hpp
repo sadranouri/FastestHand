@@ -57,7 +57,8 @@ public:
     void rejectInvitation();
     void action();
     void matchStatus();
-    void matchStatusOutput(Player current_player, Player other_player, Casual match);
+    void casualMatchStatusOutput(Player current_player, Player other_player, Casual match);
+    void rankedMatchStatusOutput(Player current_player, Player other_player, Ranked match);
     void report();
     void profile();
     void myProfile();
@@ -87,6 +88,7 @@ public:
     vector<Report> inOrderReports();
     vector<Player>::iterator findPlayerByUsername(string username);
     vector<Admin>::iterator findAdminByUsername(string username);
+    vector<Player>::iterator findOtherPlayerForMatchStatus(vector<Ranked>::iterator ranked_it, vector<Casual>::iterator casual_it, vector<Player>::iterator current_player);
     vector<Player> players;
     vector<Admin> admins;
     vector<Invitation> invitations;

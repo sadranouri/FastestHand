@@ -918,10 +918,11 @@ void FastestHand::matchStatus()
         return;
     }
 
-    vector<Casual>::iterator match_it = find_if(casual_matches.begin(), casual_matches.end(), [&](Casual c){return (c.getInvited() == session.username || c.getInviter() == session.username) && c.isFinished() == false;});
+    vector<Casual>::iterator casual_it = find_if(casual_matches.begin(), casual_matches.end(), [&](Casual c){return (c.getInvited() == session.username || c.getInviter() == session.username) && c.isFinished() == false;});
 
+    vector<Ranked>::iterator ranked_it = find_if(ranked_matches.begin(), ranked_matches.end(), [&](Ranked r){return (r.getInvited() == session.username || r.getInviter() == session.username) && r.isFinished() == false;});
 
-    if(match_it == casual_matches.end())
+    if(casual_it == casual_matches.end() && ranked_it == ranked_matches.end())
     {
         cout << NOT_FOUND << endl;
         return;
@@ -929,22 +930,51 @@ void FastestHand::matchStatus()
 
     vector<Player>::iterator current_player = findPlayerByUsername(session.username);
 
-    vector<Player>::iterator other_player;
+    vector<Player>::iterator other_player = findOtherPlayerForMatchStatus(ranked_it, casual_it, current_player);
 
-    if(match_it->getInvited() == current_player->getUsername())
+    if(casual_it != casual_matches.end())
     {
-        other_player = findPlayerByUsername(match_it->getInviter());
+        casualMatchStatusOutput((*current_player), (*other_player), (*casual_it));
     }
-    else if(match_it->getInviter() == current_player->getUsername())
+    else if(ranked_it != ranked_matches.end())
     {
-        other_player = findPlayerByUsername(match_it->getInvited());
+        rankedMatchStatusOutput((*current_player), (*other_player), (*ranked_it));
     }
-
-    matchStatusOutput((*current_player), (*other_player), (*match_it));
 }
 
 
-void FastestHand::matchStatusOutput(Player current_player, Player other_player, Casual match)
+vector<Player>::iterator FastestHand::findOtherPlayerForMatchStatus(vector<Ranked>::iterator ranked_it, vector<Casual>::iterator casual_it, vector<Player>::iterator current_player)
+{
+    vector<Player>::iterator other_player;
+
+    if(casual_it != casual_matches.end())
+    {
+        if(casual_it->getInvited() == current_player->getUsername())
+        {
+            other_player = findPlayerByUsername(casual_it->getInviter());
+        }
+        else if(casual_it->getInviter() == current_player->getUsername())
+        {
+            other_player = findPlayerByUsername(casual_it->getInvited());
+        }   
+    }
+    else if(ranked_it != ranked_matches.end())
+    {
+        if(ranked_it->getInvited() == current_player->getUsername())
+        {
+            other_player = findPlayerByUsername(ranked_it->getInviter());
+        }
+        else if(ranked_it->getInviter() == current_player->getUsername())
+        {
+            other_player = findPlayerByUsername(ranked_it->getInvited());
+        }   
+    }
+    return other_player;
+}
+
+
+
+void FastestHand::casualMatchStatusOutput(Player current_player, Player other_player, Casual match)
 {
     cout << "Turn " << match.getTurnNumber() << endl;
     if(current_player.getCurrentCasualAct() == "")
@@ -975,6 +1005,41 @@ void FastestHand::matchStatusOutput(Player current_player, Player other_player, 
         }
     }
     cout << "Your remaining bullets: " << current_player.getRemainingCasualBullets() << endl;
+}
+
+
+void FastestHand::rankedMatchStatusOutput(Player current_player, Player other_player, Ranked match)
+{
+    cout << "Turn " << match.getTurnNumber() << endl;
+    if(current_player.getCurrentRankedAct() == "")
+    {
+        cout << "You: pending" << endl;
+    }
+    else
+    {
+        cout << "You: " << current_player.getCurrentRankedAct() << endl;
+    }
+
+    if(other_player.getCurrentRankedAct() == "")
+    {
+        cout << "Your opponent: pending" << endl;
+    }
+    else
+    {
+        cout << "Your opponent: played" << endl;
+    }
+
+    cout << "History:" << endl;
+    cout << left << setw(20) << "Opponent's moves:" << "Your moves:" << endl;
+    if(match.getTurnNumber() != 1)
+    {
+        for(int i = 0, j = 0; i < current_player.getActions().size(), j < other_player.getActions().size(); i++, j++)
+        {
+            cout << left << setw(20) << other_player.getActions()[j] << current_player.getActions()[i] << endl;
+        }
+    }
+    cout << "Your remaining bullets: " << current_player.getRankedGameStatus().bullets << endl;
+    cout << "Your remaining health: " << current_player.getCurrentRankedHealth() << endl;
 }
 
 

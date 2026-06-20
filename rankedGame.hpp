@@ -20,6 +20,7 @@ public:
     bool reload(Player *current_player, Player *other_player);
     double matchRP(Player winner);
     double healthBonus(Player winner);
+    int getTurnNumber();
 private:
     int turn_number_ = 1;
 };

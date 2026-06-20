@@ -198,3 +198,9 @@ void Ranked::defend(Player *current_player, Player *other_player)
         other_player->addRankedAct(DEFEND);
     }
 }
+
+
+int Ranked::getTurnNumber()
+{
+    return turn_number_;
+}
