@@ -2,6 +2,7 @@
 #define RANKEDGAME_HPP
 #include <iostream>
 #include "games.hpp"
+#include "players.hpp"
 using namespace std;
 
 

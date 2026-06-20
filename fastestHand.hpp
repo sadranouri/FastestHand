@@ -1,6 +1,7 @@
 #pragma once
 #include <iostream>
 #include <vector>
+#include <map>
 #include "players.hpp"
 #include "admins.hpp"
 #include "games.hpp"
@@ -81,7 +82,7 @@ public:
     bool outOfRangeAmount(string type, int amount);
     int totalWins(string username);
     int totalLosses(string username);
-    map<string, string> FastestHand::parseArguments();
+    map<string, string> parseArguments();
     vector<Player> inOrderReadyPlayers(string order_type);
     vector<Player> inOrderRankedPlayers(string order_type);
     vector<Invitation> inOrderInvitations(string username);
