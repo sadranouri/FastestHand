@@ -23,6 +23,7 @@
 #define NOT_FOUND "Not Found"
 #define LOGGED_IN "logged in"
 #define LOGGED_OUT "logged out"
+#define LEVEL_MISMATCH "Level Mismatch"
 #define SHOOT "shoot"
 #define DEFEND "defend"
 #define RELOAD "reload"
@@ -757,6 +758,11 @@ void FastestHand::startMatch()
     }
     else if(i_it->match_type == RANKED)
     {
+        if(p1_it->getRankedLevel() != p2_it->getRankedLevel())
+        {
+            cout << LEVEL_MISMATCH << endl;
+            return;
+        }
         startRankedMatch(&(*p1_it), &(*p2_it), i_it->id);
     }
 }
@@ -999,9 +1005,9 @@ void FastestHand::casualMatchStatusOutput(Player current_player, Player other_pl
     cout << left << setw(20) << "Opponent's moves:" << "Your moves:" << endl;
     if(match.getTurnNumber() != 1)
     {
-        for(int i = 0, j = 0; i < current_player.getActions().size(), j < other_player.getActions().size(); i++, j++)
+        for(int i = 0, j = 0; i < current_player.getCasualActions().size(), j < other_player.getCasualActions().size(); i++, j++)
         {
-            cout << left << setw(20) << other_player.getActions()[j] << current_player.getActions()[i] << endl;
+            cout << left << setw(20) << other_player.getCasualActions()[j] << current_player.getCasualActions()[i] << endl;
         }
     }
     cout << "Your remaining bullets: " << current_player.getRemainingCasualBullets() << endl;
@@ -1033,9 +1039,9 @@ void FastestHand::rankedMatchStatusOutput(Player current_player, Player other_pl
     cout << left << setw(20) << "Opponent's moves:" << "Your moves:" << endl;
     if(match.getTurnNumber() != 1)
     {
-        for(int i = 0, j = 0; i < current_player.getActions().size(), j < other_player.getActions().size(); i++, j++)
+        for(int i = 0, j = 0; i < current_player.getRankedActions().size(), j < other_player.getRankedActions().size(); i++, j++)
         {
-            cout << left << setw(20) << other_player.getActions()[j] << current_player.getActions()[i] << endl;
+            cout << left << setw(20) << other_player.getRankedActions()[j] << current_player.getRankedActions()[i] << endl;
         }
     }
     cout << "Your remaining bullets: " << current_player.getRankedGameStatus().bullets << endl;
@@ -1533,6 +1539,8 @@ void FastestHand::penalty()
         return;
     }
     cout << OK << endl;
+    vector<Player>::iterator punished_player = findPlayerByUsername(report_it->reported);
+    punished_player->penalize(type, amount, number_of_matches);
     reports.erase(remove_if(reports.begin(), reports.end(), [&](Report r){return r.id == report_id;}));
 
 }
@@ -1540,7 +1548,7 @@ void FastestHand::penalty()
 
 bool FastestHand::outOfRangeAmount(string type, int amount)
 {
-    if(type == "health_panalty")
+    if(type == "health_penalty")
     {
         if(amount < 1 || amount > 2)
         {

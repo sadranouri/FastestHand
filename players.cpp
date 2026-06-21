@@ -174,9 +174,15 @@ string Player::getCurrentCasualAct()
 }
 
 
-vector<string> Player::getActions()
+vector<string> Player::getCasualActions()
 {
     return casual_match_.actions;
+}
+
+
+vector<string> Player::getRankedActions()
+{
+    return ranked_match_.actions;
 }
 
 
@@ -238,11 +244,11 @@ void Player::startRankedGame()
     {
         if(penalty_type_ == "health_penalty")
         {
-            ranked_match_.health -= peanlty_amount_;
+            ranked_match_.health -= penalty_amount_;
         }
         else if(penalty_type_ == "bullet_penalty")
         {
-            ranked_match_.bullets -= peanlty_amount_;
+            ranked_match_.bullets -= penalty_amount_;
         }
     }
 }
@@ -311,12 +317,12 @@ void Player::decreaseRP(double RP)
 void Player::penalize(string type, int amount, int number_of_matches)
 {
     penalty_type_ = type;
-    peanlty_amount_ = amount;
+    penalty_amount_ = amount;
     penalized_matches_ = number_of_matches;
 }
 
 
-string Player::getPeanltyType()
+string Player::getPenaltyType()
 {
     return penalty_type_;
 }
@@ -324,7 +330,7 @@ string Player::getPeanltyType()
 
 int Player::getPenaltyAmount()
 {
-    return peanlty_amount_;
+    return penalty_amount_;
 }
 
 

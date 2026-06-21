@@ -177,6 +177,7 @@ void Ranked::defend(Player *current_player, Player *other_player)
     if(other_player->getRankedGameStatus().act == "")
     {
         current_player->changeRankedAct(DEFEND);
+        return;
     }
     other_player->performRankedAction(other_player->getRankedGameStatus().act);
     

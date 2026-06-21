@@ -94,7 +94,7 @@ bool Casual::shoot(Player *current_player, Player *other_player)
         return false;
     }
     current_player->performCasualAction(SHOOT);
-    other_player->performRankedAction(other_player->getCasualGameStatus().act);
+    other_player->performCasualAction(other_player->getCasualGameStatus().act);
 
     current_player->addCasualAct(SHOOT);
     current_player->changeCasualAct("");
@@ -161,6 +161,7 @@ void Casual::defend(Player *current_player, Player *other_player)
     if(other_player->getCasualGameStatus().act == "")
     {
         current_player->changeCasualAct(DEFEND);
+        return;
     }
     other_player->performCasualAction(other_player->getCasualGameStatus().act);
     

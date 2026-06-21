@@ -36,7 +36,7 @@ public:
     string getCurrentCasualAct();
     string getCurrentRankedAct();
     string getRankedLevel();
-    string getPeanltyType();
+    string getPenaltyType();
     double getXP();
     double getRP();
     int getRemainingCasualBullets();
@@ -66,7 +66,8 @@ public:
     void penalize(string type, int amount, int number_of_matches);
     bool getReadyStatus();
     bool getPlayingStatus();
-    vector<string> getActions();
+    vector<string> getCasualActions();
+    vector<string> getRankedActions();
     vector<string> getBlockedPlayers();
     CasualGame getCasualGameStatus();
     RankedGame getRankedGameStatus();
@@ -84,7 +85,7 @@ private:
     string ranked_level_;
     vector<string> blocked_players_;
     int penalized_matches_ = 0;
-    int peanlty_amount_ = 0;
+    int penalty_amount_ = 0;
     string penalty_type_ = "";
 };
 
