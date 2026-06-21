@@ -114,13 +114,20 @@ void Player::startCasualGame()
 void Player::endGame()
 {
     is_playing_ = false;
-    if(match_type_ == RANKED)
+    if (match_type_ == RANKED)
     {
-        if(penalized_matches_ > 0)
+        if (health_penalty_applied_in_current_match_)
         {
-            penalized_matches_--;
+            health_penalty_matches_--;
+        }
+        if (bullet_penalty_applied_in_current_match_)
+        {
+            bullet_penalty_matches_--;
         }
     }
+    
+    health_penalty_applied_in_current_match_ = false;
+    bullet_penalty_applied_in_current_match_ = false;
     match_type_ = "";
 }
 
@@ -240,16 +247,19 @@ vector<string> Player::getBlockedPlayers()
 void Player::startRankedGame()
 {
     ranked_match_ = RankedGame();
-    if(penalized_matches_ > 0)
+    health_penalty_applied_in_current_match_ = false;
+    bullet_penalty_applied_in_current_match_ = false;
+
+    if (health_penalty_matches_ > 0)
     {
-        if(penalty_type_ == "health_penalty")
-        {
-            ranked_match_.health -= penalty_amount_;
-        }
-        else if(penalty_type_ == "bullet_penalty")
-        {
-            ranked_match_.bullets -= penalty_amount_;
-        }
+        ranked_match_.health -= health_penalty_amount_;
+        health_penalty_applied_in_current_match_ = true;
+    }
+
+    if (bullet_penalty_matches_ > 0)
+    {
+        ranked_match_.bullets -= bullet_penalty_amount_;
+        bullet_penalty_applied_in_current_match_ = true;
     }
 }
 
@@ -316,25 +326,35 @@ void Player::decreaseRP(double RP)
 
 void Player::penalize(string type, int amount, int number_of_matches)
 {
-    penalty_type_ = type;
-    penalty_amount_ = amount;
-    penalized_matches_ = number_of_matches;
+    if (type == "health_penalty")
+    {
+        health_penalty_amount_ = amount;
+        health_penalty_matches_ = number_of_matches;
+    }
+    else if (type == "bullet_penalty")
+    {
+        bullet_penalty_amount_ = amount;
+        bullet_penalty_matches_ = number_of_matches;
+    }
 }
 
 
-string Player::getPenaltyType()
+int Player::getHealthPenaltyAmount()
 {
-    return penalty_type_;
+    return health_penalty_amount_;
 }
 
-
-int Player::getPenaltyAmount()
+int Player::getHealthPenalizedMatches()
 {
-    return penalty_amount_;
+    return health_penalty_matches_;
 }
 
-
-int Player::getPenalizedMatches()
+int Player::getBulletPenaltyAmount()
 {
-    return penalized_matches_;
+    return bullet_penalty_amount_;
+}
+
+int Player::getBulletPenalizedMatches()
+{
+    return bullet_penalty_matches_;
 }

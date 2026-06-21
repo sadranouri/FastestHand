@@ -36,13 +36,14 @@ public:
     string getCurrentCasualAct();
     string getCurrentRankedAct();
     string getRankedLevel();
-    string getPenaltyType();
     double getXP();
     double getRP();
     int getRemainingCasualBullets();
     int getCurrentRankedHealth();
-    int getPenaltyAmount();
-    int getPenalizedMatches();
+    int getHealthPenaltyAmount();
+    int getHealthPenalizedMatches();
+    int getBulletPenaltyAmount();
+    int getBulletPenalizedMatches();
     void changeStatus();
     void changeReadyStatus(bool status);
     void changeMatchType(string match_type);
@@ -84,9 +85,12 @@ private:
     RankedGame ranked_match_;
     string ranked_level_;
     vector<string> blocked_players_;
-    int penalized_matches_ = 0;
-    int penalty_amount_ = 0;
-    string penalty_type_ = "";
+    int health_penalty_matches_ = 0;
+    int health_penalty_amount_ = 0;
+    bool health_penalty_applied_in_current_match_ = false;
+    int bullet_penalty_matches_ = 0;
+    int bullet_penalty_amount_ = 0;
+    bool bullet_penalty_applied_in_current_match_ = false;
 };
 
 #endif
