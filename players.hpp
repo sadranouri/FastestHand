@@ -2,10 +2,8 @@
 #define PLAYERS_HPP
 #include <iostream>
 #include <vector>
-#define LOGGED_IN "logged in"
-#define LOGGED_OUT "logged out"
+#include "users.hpp"
 using namespace std;
-
 
 struct CasualGame
 {
@@ -13,7 +11,6 @@ struct CasualGame
     string act = "";
     vector<string> actions;
 };
-
 
 struct RankedGame
 {
@@ -23,16 +20,11 @@ struct RankedGame
     vector<string> actions;
 };
 
-
-
-class Player
+class Player : public User
 {
 public:
     Player(string username, string password);
     Player(string username, string password, double XP, double RP);
-    string getUsername();
-    string getPassword();
-    string getStatus();
     string getCurrentCasualAct();
     string getCurrentRankedAct();
     string getRankedLevel();
@@ -44,7 +36,6 @@ public:
     int getHealthPenalizedMatches();
     int getBulletPenaltyAmount();
     int getBulletPenalizedMatches();
-    void changeStatus();
     void changeReadyStatus(bool status);
     void changeMatchType(string match_type);
     void changePlayingStatus(bool playingStatus);
@@ -73,11 +64,8 @@ public:
     CasualGame getCasualGameStatus();
     RankedGame getRankedGameStatus();
 private:
-    string username_;
-    string password_;
     double XP_;
     double RP_;
-    string status_ = LOGGED_IN;
     bool casual_match_ready_ = false;
     bool is_playing_ = false;
     string match_type_ = "";

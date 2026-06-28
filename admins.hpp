@@ -1,21 +1,13 @@
 #ifndef ADMINS_HPP
 #define ADMINS_HPP
 #include <iostream>
+#include "users.hpp"
 using namespace std;
 
-
-class Admin
+class Admin : public User
 {
 public:
     Admin(string username, string password);
-    string getUsername();
-    string getPassword();
-    string getStatus();
-    void changeStatus();
-private:
-    string username_;
-    string password_;
-    string status_;
 };
 
 #endif

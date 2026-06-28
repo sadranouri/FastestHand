@@ -1,7 +1,5 @@
 #include <iostream>
 #include "players.hpp"
-#define LOGGED_IN "logged in"
-#define LOGGED_OUT "logged out"
 #define BRONZE "Bronze"
 #define SILVER "Silver"
 #define GOLD "Golden"
@@ -10,11 +8,8 @@
 #define RANKED "ranked"
 using namespace std;
 
-
-Player::Player(string username, string password)
+Player::Player(string username, string password) : User(username, password)
 {
-    username_ = username;
-    password_ = password;
     XP_ = 500;
     RP_ = 1200;
     rankLeveling(1200);
@@ -24,11 +19,8 @@ Player::Player(string username, string password)
     match_type_ = "";
 }
 
-
-Player::Player(string username, string password, double XP, double RP)
+Player::Player(string username, string password, double XP, double RP) : User(username, password)
 {
-    username_ = username;
-    password_ = password;
     XP_ = XP;
     RP_ = RP;
     rankLeveling(RP);
@@ -38,73 +30,35 @@ Player::Player(string username, string password, double XP, double RP)
     match_type_ = "";
 }
 
-
-string Player::getUsername()
-{
-    return username_;
-}
-
-
-string Player::getPassword()
-{
-    return password_;
-}
-
-
-string Player::getStatus()
-{
-    return status_;
-}
-
-
-void Player::changeStatus()
-{
-    if(status_ == LOGGED_IN)
-    {
-        status_ = LOGGED_OUT;
-    }
-    else
-    {
-        status_ = LOGGED_IN;
-    }
-}
-
-
 void Player::changeReadyStatus(bool status)
 {
     casual_match_ready_ = status;
 }
-
 
 bool Player::getReadyStatus()
 {
     return casual_match_ready_;
 }
 
-
 double Player::getXP()
 {
     return XP_;
 }
-
 
 bool Player::getPlayingStatus()
 {
     return is_playing_;
 }
 
-
 void Player::changeMatchType(string match_type)
 {
     match_type_ = match_type;
 }
 
-
 void Player::changePlayingStatus(bool playingStatus)
 {
     is_playing_ = playingStatus;
 }
-
 
 void Player::startCasualGame()
 {
@@ -137,12 +91,10 @@ CasualGame Player::getCasualGameStatus()
     return casual_match_;
 }
 
-
 void Player::changeCasualAct(string act)
 {
     casual_match_.act = act;
 }
-
 
 void Player::performCasualAction(string act)
 {
@@ -156,54 +108,45 @@ void Player::performCasualAction(string act)
     }
 }
 
-
 void Player::increaseXP(double XP)
 {
     XP_ += XP;
 }
-
 
 void Player::decreaseXP(double XP)
 {
     XP_ -= XP;
 }
 
-
 void Player::addCasualAct(string act)
 {
     casual_match_.actions.push_back(act);
 }
-
 
 string Player::getCurrentCasualAct()
 {
     return casual_match_.act;
 }
 
-
 vector<string> Player::getCasualActions()
 {
     return casual_match_.actions;
 }
-
 
 vector<string> Player::getRankedActions()
 {
     return ranked_match_.actions;
 }
 
-
 int Player::getRemainingCasualBullets()
 {
     return casual_match_.bullets;
 }
 
-
 double Player::getRP()
 {
     return RP_;
 }
-
 
 void Player::rankLeveling(double RP)
 {
@@ -225,24 +168,20 @@ void Player::rankLeveling(double RP)
     }
 }
 
-
 string Player::getRankedLevel()
 {
     return ranked_level_;
 }
-
 
 void Player::blockPlayer(string username)
 {
     blocked_players_.push_back(username);
 }
 
-
 vector<string> Player::getBlockedPlayers()
 {
     return blocked_players_;
 }
-
 
 void Player::startRankedGame()
 {
@@ -263,18 +202,15 @@ void Player::startRankedGame()
     }
 }
 
-
 string Player::getCurrentRankedAct()
 {
     return ranked_match_.act;
 }
 
-
 RankedGame Player::getRankedGameStatus()
 {
     return ranked_match_;
 }
-
 
 void Player::performRankedAction(string act)
 {
@@ -288,30 +224,25 @@ void Player::performRankedAction(string act)
     }
 }
 
-
 void Player::addRankedAct(string act)
 {
     ranked_match_.actions.push_back(act);
 }
-
 
 void Player::decreaseRankedHealth()
 {
     ranked_match_.health--;
 }
 
-
 int Player::getCurrentRankedHealth()
 {
     return ranked_match_.health;
 }
 
-
 void Player::changeRankedAct(string act)
 {
     ranked_match_.act = act;
 }
-
 
 void Player::increaseRP(double RP, double health_bonus)
 {
@@ -324,7 +255,6 @@ void Player::decreaseRP(double RP)
     RP_ -= RP;
     rankLeveling(RP_);
 }
-
 
 void Player::penalize(string type, int amount, int number_of_matches)
 {
@@ -339,7 +269,6 @@ void Player::penalize(string type, int amount, int number_of_matches)
         bullet_penalty_matches_ = number_of_matches;
     }
 }
-
 
 int Player::getHealthPenaltyAmount()
 {
