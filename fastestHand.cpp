@@ -171,13 +171,15 @@ void FastestHand::answerRequest()
 
 void FastestHand::post(string command)
 {
+    map<string, string> setArgs = parseArguments();
+
     if(command == "register")
     {
-        playerRegister();
+        playerRegister(setArgs);
     }
     else if(command == "login")
     {
-        login();
+        login(setArgs);
     }
     else if(command == "logout")
     {
@@ -185,58 +187,58 @@ void FastestHand::post(string command)
     }
     else if(command == "casual_match_ready")
     {
-        casualMatchReady();
+        casualMatchReady(setArgs);
     }
     else if(command == "invitation")
     {
-        invitation();
+        invitation(setArgs);
     } 
     else if(command == "start_match")
     {
-        startMatch();
+        startMatch(setArgs);
     }
     else if(command == "reject_invitation")
     {
-        rejectInvitation();
+        rejectInvitation(setArgs);
     }
     else if(command == "action")
     {
-        action();
+        action(setArgs);
     }
     else if(command == "report")
     {
-        report();
+        report(setArgs);
     }
     else if(command == "penalty")
     {
-        penalty();
+        penalty(setArgs);
     }
     else if(command == "dismiss_report")
     {
-        dismissReport();
+        dismissReport(setArgs);
     }
     else if(command == "block")
     {
-        block();
+        block(setArgs);
     }
     else
     {
         cout << NOT_FOUND << endl;
-        string dummy;
-        getline(cin, dummy);
     }
 }
 
 
 void FastestHand::get(string command)
 {
+    map<string, string> setArgs = parseArguments();
+
     if(command == "match_status")
     {
         matchStatus();
     }
     else if(command == "profile")
     {
-        profile();
+        profile(setArgs);
     }
     else if(command == "received_invitations")
     {
@@ -248,17 +250,15 @@ void FastestHand::get(string command)
     }
     else if(command == "ranked_match_opponents")
     {
-        rankedMatchOpponents();
+        rankedMatchOpponents(setArgs);
     }
     else if(command == "casual_match_opponents")
     {
-        casualMatchOpponents();
+        casualMatchOpponents(setArgs);
     }
     else
     {
         cout << NOT_FOUND << endl;
-        string dummy;
-        getline(cin, dummy);
     }
 }
 
@@ -292,10 +292,8 @@ vector<Admin>::iterator FastestHand::findAdminByUsername(string username)
 }
 
 
-void FastestHand::playerRegister()
+void FastestHand::playerRegister(map<string, string> setArgs)
 {
-    map<string, string> setArgs = parseArguments();
-
     string username;
     string password;
 
@@ -350,10 +348,8 @@ bool FastestHand::usernameAlreadyExists(string username)
 }
 
 
-void FastestHand::login()
+void FastestHand::login(map<string, string> setArgs)
 {
-    map<string, string> setArgs = parseArguments();
-
     string username;
     string password;
 
@@ -453,9 +449,6 @@ bool FastestHand::wrongPassword(string username, string password)
 
 void FastestHand::logout()
 {
-    string dummy;
-    getline(cin, dummy);
-
     if(session.isPlayer == false && session.isAdmin == false)
     {
         cout << PERMISSION_DENIED << endl;
@@ -483,22 +476,17 @@ void FastestHand::logout()
 }
 
 
-void FastestHand::casualMatchReady()
+void FastestHand::casualMatchReady(map<string, string> setArgs)
 {
-    string arg1;
-    string arg2;
+    map<string, string>::iterator s_it = find_if(setArgs.begin(), setArgs.end(), [](pair<string, string> p){return p.first == "status";});
 
-    string rest_of_line;
-    getline(cin, rest_of_line);
-    istringstream iss(rest_of_line);
-
-    iss >> arg1 >> quoted(arg2);
-
-    if(arg1 != "status" || (arg2 != "true" && arg2 != "false"))
+    if(s_it == setArgs.end() || (s_it->second != "true" && s_it->second != "false"))
     {
         cout << BAD_REQUEST << endl;
         return;
     }
+
+    string arg2 = s_it->second;
 
     if(session.isPlayer == false)
     {
@@ -521,38 +509,21 @@ void FastestHand::casualMatchReady()
 }
 
 
-void FastestHand::casualMatchOpponents()
+void FastestHand::casualMatchOpponents(map<string, string> setArgs)
 {
-    string rest_of_line;
-    getline(cin, rest_of_line);
-
     string sort_order = "desc"; 
 
-    bool isEmpty = true;
-    for(char c : rest_of_line)
+    if(!setArgs.empty())
     {
-        if(c != ' ' && c != '\t' && c != '\r')
-        {
-            isEmpty = false;
-            break;
-        }
-    }
+        map<string, string>::iterator s_it = find_if(setArgs.begin(), setArgs.end(), [](pair<string, string> p){return p.first == "sort_order";});
 
-    
-    if(!isEmpty)
-    {
-        istringstream iss(rest_of_line);
-        string arg1;
-        string arg2;
-        iss >> arg1 >> quoted(arg2);
-
-        if(arg1 != "sort_order" || (arg2 != "asc" && arg2 != "desc"))
+        if(s_it == setArgs.end() || (s_it->second != "asc" && s_it->second != "desc"))
         {
             cout << BAD_REQUEST << endl;
             return;
         }
         
-        sort_order = arg2;
+        sort_order = s_it->second;
     }
 
     if(session.isPlayer == false)
@@ -615,10 +586,8 @@ vector<Player> FastestHand::inOrderReadyPlayers(string order_type)
 }
 
 
-void FastestHand::invitation()
+void FastestHand::invitation(map<string, string> setArgs)
 {
-    map<string, string> setArgs = parseArguments();
-
     string username;
     string match_type;
 
@@ -702,27 +671,17 @@ void FastestHand::inviteCreator(string match_type, string invited)
 }
 
 
-void FastestHand::startMatch()
+void FastestHand::startMatch(map<string, string> setArgs)
 {
-    string arg1;
-    string str_invitation_id;
-    int invitation_id;
+    map<string, string>::iterator id_it = find_if(setArgs.begin(), setArgs.end(), [](pair<string, string> p){return p.first == "invitation_id";});
 
-    string rest_of_line;
-    getline(cin, rest_of_line);
-    istringstream iss(rest_of_line);
-
-    iss >> arg1 >> quoted(str_invitation_id);
-    if(str_invitation_id != "")
-    {
-        invitation_id = stoi(str_invitation_id);
-    }
-
-    if(arg1 != "invitation_id" || iss.fail())
+    if(id_it == setArgs.end())
     {
         cout << BAD_REQUEST << endl;
         return;
     }
+
+    int invitation_id = stoi(id_it->second);
 
     vector<Invitation>::iterator i_it = find_if(invitations.begin(), invitations.end(), [&](Invitation i){return i.id == invitation_id;});
 
@@ -804,29 +763,17 @@ void FastestHand::startRankedMatch(Player *inviter, Player *invited, int invitat
 }
 
 
-void FastestHand::rejectInvitation()
+void FastestHand::rejectInvitation(map<string, string> setArgs)
 {
-    string arg1;
-    string str_invitation_id;
-    int invitation_id;
+    map<string, string>::iterator id_it = find_if(setArgs.begin(), setArgs.end(), [](pair<string, string> p){return p.first == "invitation_id";});
 
-    string rest_of_line;
-    getline(cin, rest_of_line);
-    istringstream iss(rest_of_line);
-
-    iss >> arg1 >> quoted(str_invitation_id);
-    if(str_invitation_id != "")
-    {
-        invitation_id = stoi(str_invitation_id);
-    }
-
-    if(arg1 != "invitation_id" || iss.fail())
+    if(id_it == setArgs.end())
     {
         cout << BAD_REQUEST << endl;
         return;
     }
 
-
+    int invitation_id = stoi(id_it->second);
 
     vector<Invitation>::iterator i_it = find_if(invitations.begin(), invitations.end(), [&](Invitation i){return i.id == invitation_id;});
 
@@ -858,22 +805,17 @@ void FastestHand::rejectInvitation()
 }
 
 
-void FastestHand::action()
+void FastestHand::action(map<string, string> setArgs)
 {
-    string arg1;
-    string act;
+    map<string, string>::iterator a_it = find_if(setArgs.begin(), setArgs.end(), [](pair<string, string> p){return p.first == "action";});
 
-    string rest_of_line;
-    getline(cin, rest_of_line);
-    istringstream iss(rest_of_line);
-
-    iss >> arg1 >> quoted(act);
-
-    if(arg1 != "action" || (act != SHOOT && act != DEFEND && act != RELOAD))
+    if(a_it == setArgs.end() || (a_it->second != SHOOT && a_it->second != DEFEND && a_it->second != RELOAD))
     {
         cout << BAD_REQUEST << endl;
         return;
     }
+
+    string act = a_it->second;
 
     if(session.isPlayer == false)
     {
@@ -1059,10 +1001,8 @@ void FastestHand::rankedMatchStatusOutput(Player current_player, Player other_pl
 }
 
 
-void FastestHand::report()
+void FastestHand::report(map<string, string> setArgs)
 {
-    map<string, string> setArgs = parseArguments();
-
     string username;
     string reason;
 
@@ -1112,25 +1052,9 @@ void FastestHand::report()
 }
 
 
-void FastestHand::profile()
+void FastestHand::profile(map<string, string> setArgs)
 {
-    string rest_of_line;
-    string arg1;
-    string username;
-    getline(cin, rest_of_line);
-
-    bool isEmpty = true;
-
-    for(char c : rest_of_line)
-    {
-        if(c != ' ' && c != '\t' && c != '\r')
-        {
-            isEmpty = false;
-            break;
-        }
-    }
-
-    if(isEmpty)
+    if(setArgs.empty())
     {
         if(session.isPlayer == false)
         {
@@ -1141,14 +1065,15 @@ void FastestHand::profile()
     }
     else
     {
-        istringstream iss(rest_of_line);
-        iss >> arg1 >> quoted(username);
+        map<string, string>::iterator u_it = find_if(setArgs.begin(), setArgs.end(), [](pair<string, string> p){return p.first == "username";});
 
-        if(arg1 != "username")
+        if(u_it == setArgs.end())
         {
             cout << BAD_REQUEST << endl;
             return;
         }
+
+        string username = u_it->second;
 
         if(session.isPlayer == false && session.isAdmin == false)
         {
@@ -1331,33 +1256,19 @@ vector<Report> FastestHand::inOrderReports()
 }
 
 
-void FastestHand::rankedMatchOpponents()
+void FastestHand::rankedMatchOpponents(map<string, string> setArgs)
 {
-    string rest_of_line;
-    getline(cin, rest_of_line);
-    string arg1;
-    string order_type;
-
-    bool isEmpty = true;
-    for(char c : rest_of_line)
+    if(!setArgs.empty())
     {
-        if(c != ' ' && c != '\t' && c != '\r')
-        {
-            isEmpty = false;
-            break;
-        }
-    }
-    
-    if(!isEmpty)
-    {
-        istringstream iss(rest_of_line);
-        iss >> arg1 >> quoted(order_type);
+        map<string, string>::iterator s_it = find_if(setArgs.begin(), setArgs.end(), [](pair<string, string> p){return p.first == "sort_order";});
 
-        if(arg1 != "sort_order" || (order_type != "desc" && order_type != "asc"))
+        if(s_it == setArgs.end() || (s_it->second != "desc" && s_it->second != "asc"))
         {
             cout << BAD_REQUEST << endl;
             return;
         }
+
+        string order_type = s_it->second;
 
         if(session.isPlayer == false)
         {
@@ -1450,10 +1361,8 @@ void FastestHand::outputRankedPlayers(vector<Player> ranked_players)
 }
 
 
-void FastestHand::block()
+void FastestHand::block(map<string, string> setArgs)
 {
-    map<string, string> setArgs = parseArguments();
-
     map<string, string>::iterator u_it = find_if(setArgs.begin(), setArgs.end(), [](pair<string, string> p){return p.first == "username";});
 
     map<string, string>::iterator s_it = find_if(setArgs.begin(), setArgs.end(), [](pair<string, string> p){return p.first == "status";});
@@ -1522,10 +1431,8 @@ bool FastestHand::adminUsername(string username)
 }
 
 
-void FastestHand::penalty()
+void FastestHand::penalty(map<string, string> setArgs)
 {
-    map<string, string> setArgs = parseArguments();
-
     if(session.isAdmin == false)
     {
         cout << PERMISSION_DENIED << endl;
@@ -1591,22 +1498,17 @@ bool FastestHand::outOfRangeAmount(string type, int amount)
 }
 
 
-void FastestHand::dismissReport()
+void FastestHand::dismissReport(map<string, string> setArgs)
 {
-    string rest_of_line;
-    getline(cin, rest_of_line);
-    istringstream iss(rest_of_line);
-    string arg1;
-    string str_report_id;
-    iss >> arg1 >> quoted(str_report_id);
+    map<string, string>::iterator id_it = find_if(setArgs.begin(), setArgs.end(), [](pair<string, string> p){return p.first == "report_id";});
 
-    if(arg1 != "report_id" || str_report_id.empty() || iss.fail()) {
+    if(id_it == setArgs.end() || id_it->second.empty())
+    {
         cout << BAD_REQUEST << endl;
         return;
     }
 
-    int report_id = stoi(str_report_id);
-
+    int report_id = stoi(id_it->second);
 
     if(session.isAdmin == false)
     {

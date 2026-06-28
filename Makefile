@@ -3,7 +3,7 @@ CXXFLAGS = -std=c++20 -Wall
 
 TARGET = UTGame
 
-OBJS = main.o fastestHand.o players.o admins.o
+OBJS = main.o fastestHand.o players.o admins.o users.o games.o casualGame.o rankedGame.o
 
 all: $(TARGET)
 
