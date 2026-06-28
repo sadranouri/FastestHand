@@ -9,10 +9,10 @@
 #define SHOOT "shoot"
 #define DEFEND "defend"
 #define RELOAD "reload"
-#define BRONZE "bronze"
-#define SILVER "silver"
-#define GOLD "gold"
-#define PLATINUM "platinum"
+#define BRONZE "Bronze"
+#define SILVER "Silver"
+#define GOLD "Golden"
+#define PLATINUM "Platinum"
 using namespace std;
 
 

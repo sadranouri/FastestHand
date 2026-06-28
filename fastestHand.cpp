@@ -27,10 +27,10 @@
 #define SHOOT "shoot"
 #define DEFEND "defend"
 #define RELOAD "reload"
-#define BRONZE "bronze"
-#define SILVER "silver"
-#define GOLD "gold"
-#define PLATINUM "platinum"
+#define BRONZE "Bronze"
+#define SILVER "Silver"
+#define GOLD "Golden"
+#define PLATINUM "Platinum"
 #define CASUAL "casual"
 #define RANKED "ranked"
 #define BLOCKED "blocked"
@@ -214,6 +214,10 @@ void FastestHand::post(string command)
     else if(command == "dismiss_report")
     {
         dismissReport();
+    }
+    else if(command == "block")
+    {
+        block();
     }
     else
     {
@@ -723,7 +727,7 @@ void FastestHand::startMatch()
     vector<Invitation>::iterator i_it = find_if(invitations.begin(), invitations.end(), [&](Invitation i){return i.id == invitation_id;});
 
 
-    if(session.isPlayer == false || session.username != i_it->invited)
+    if(session.isPlayer == false)
     {
         cout << PERMISSION_DENIED << endl;
         return;
@@ -732,6 +736,12 @@ void FastestHand::startMatch()
     if(i_it == invitations.end())
     {
         cout << NOT_FOUND << endl;
+        return;
+    }
+
+    if(session.username != i_it->invited)
+    {
+        cout << PERMISSION_DENIED << endl;
         return;
     }
 
@@ -750,7 +760,6 @@ void FastestHand::startMatch()
         return i.id == invitation_id;
     }));
 
-    cout << OK << endl;
 
     if(i_it->match_type == CASUAL)
     {
@@ -765,6 +774,7 @@ void FastestHand::startMatch()
         }
         startRankedMatch(&(*p1_it), &(*p2_it), i_it->id);
     }
+    cout << OK << endl;
 }
 
 
@@ -872,9 +882,9 @@ void FastestHand::action()
     }
 
 
-    vector<Casual>::iterator casual_it = find_if(casual_matches.begin(), casual_matches.end(), [&](Casual c){return (c.getInviter() == session.username || c.getInvited() == session.username);});
+    vector<Casual>::iterator casual_it = find_if(casual_matches.begin(), casual_matches.end(), [&](Casual c){return (c.getInviter() == session.username || c.getInvited() == session.username) && c.isFinished() == false;});
 
-    vector<Ranked>::iterator ranked_it = find_if(ranked_matches.begin(), ranked_matches.end(), [&](Ranked r){return (r.getInviter() == session.username || r.getInvited() == session.username);});
+    vector<Ranked>::iterator ranked_it = find_if(ranked_matches.begin(), ranked_matches.end(), [&](Ranked r){return (r.getInviter() == session.username || r.getInvited() == session.username) && r.isFinished() == false;});
 
     if(casual_it == casual_matches.end() && ranked_it == ranked_matches.end())
     {
@@ -1005,7 +1015,7 @@ void FastestHand::casualMatchStatusOutput(Player current_player, Player other_pl
     cout << left << setw(20) << "Opponent's moves:" << "Your moves:" << endl;
     if(match.getTurnNumber() != 1)
     {
-        for(int i = 0, j = 0; i < current_player.getCasualActions().size(), j < other_player.getCasualActions().size(); i++, j++)
+        for(int i = 0, j = 0; i < current_player.getCasualActions().size() && j < other_player.getCasualActions().size(); i++ && j++)
         {
             cout << left << setw(20) << other_player.getCasualActions()[j] << current_player.getCasualActions()[i] << endl;
         }
@@ -1039,7 +1049,7 @@ void FastestHand::rankedMatchStatusOutput(Player current_player, Player other_pl
     cout << left << setw(20) << "Opponent's moves:" << "Your moves:" << endl;
     if(match.getTurnNumber() != 1)
     {
-        for(int i = 0, j = 0; i < current_player.getRankedActions().size(), j < other_player.getRankedActions().size(); i++, j++)
+        for(int i = 0, j = 0; i < current_player.getRankedActions().size() && j < other_player.getRankedActions().size(); i++, j++)
         {
             cout << left << setw(20) << other_player.getRankedActions()[j] << current_player.getRankedActions()[i] << endl;
         }
@@ -1184,6 +1194,8 @@ void FastestHand::othersProfile(string username)
     }
 
     cout << "username: \"" << user_it->getUsername() << "\"" << endl;
+    cout << "Level: " << user_it->getRankedLevel() << endl;
+    cout << "RP: " << user_it->getRP() << endl;
     cout << "XP: " << user_it->getXP() << endl;
     cout << "Total wins: " << totalWins(user_it->getUsername()) << endl;
     cout << "Total losses: " << totalLosses(user_it->getUsername()) << endl; 
@@ -1253,7 +1265,14 @@ void FastestHand::receivedInvitations()
     {
         for(Invitation invite : inOrderInvitations(session.username))
         {
-            cout << invite.id << ": Invitation from \"" << invite.inviter << "\" for a \"casual\" match" << endl;
+            if(invite.match_type == CASUAL)
+            {
+                cout << invite.id << ": Invitation from \"" << invite.inviter << "\" for a \"casual\" match" << endl;
+            }
+            else if(invite.match_type == RANKED)
+            {
+                cout << invite.id << ": Invitation from \"" << invite.inviter << "\" for a \"ranked\" match" << endl;
+            }
         }
     }
 }
@@ -1334,7 +1353,7 @@ void FastestHand::rankedMatchOpponents()
         istringstream iss(rest_of_line);
         iss >> arg1 >> quoted(order_type);
 
-        if(arg1 != "sort" || (order_type != "desc" && order_type != "asc"))
+        if(arg1 != "sort_order" || (order_type != "desc" && order_type != "asc"))
         {
             cout << BAD_REQUEST << endl;
             return;
@@ -1384,6 +1403,10 @@ vector<Player> FastestHand::inOrderRankedPlayers(string order_type)
     {
         if(player.getRankedLevel() == current_user->getRankedLevel())
         {
+            if(player.getUsername() == session.username)
+            {
+                continue;
+            }
             in_order_players.push_back(player);
         }
     }
@@ -1576,13 +1599,14 @@ void FastestHand::dismissReport()
     string arg1;
     string str_report_id;
     iss >> arg1 >> quoted(str_report_id);
-    int report_id = stoi(str_report_id);
 
-    if(arg1 != "report_id" || iss.fail())
-    {
+    if(arg1 != "report_id" || str_report_id.empty() || iss.fail()) {
         cout << BAD_REQUEST << endl;
         return;
     }
+
+    int report_id = stoi(str_report_id);
+
 
     if(session.isAdmin == false)
     {

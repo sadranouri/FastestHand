@@ -2,10 +2,10 @@
 #include "players.hpp"
 #define LOGGED_IN "logged in"
 #define LOGGED_OUT "logged out"
-#define BRONZE "bronze"
-#define SILVER "silver"
-#define GOLD "gold"
-#define PLATINUM "platinum"
+#define BRONZE "Bronze"
+#define SILVER "Silver"
+#define GOLD "Golden"
+#define PLATINUM "Platinum"
 #define CASUAL "casual"
 #define RANKED "ranked"
 using namespace std;
@@ -116,21 +116,21 @@ void Player::endGame()
     is_playing_ = false;
     if (match_type_ == RANKED)
     {
-        if (health_penalty_applied_in_current_match_)
+        if (health_penalty_applied_in_current_match_ && health_penalty_matches_ > 0)
         {
             health_penalty_matches_--;
+            if(health_penalty_matches_ == 0) health_penalty_amount_ = 0;
         }
-        if (bullet_penalty_applied_in_current_match_)
+        if (bullet_penalty_applied_in_current_match_ && bullet_penalty_matches_ > 0)
         {
             bullet_penalty_matches_--;
+            if(bullet_penalty_matches_ == 0) bullet_penalty_amount_ = 0;
         }
     }
     
     health_penalty_applied_in_current_match_ = false;
     bullet_penalty_applied_in_current_match_ = false;
-    match_type_ = "";
 }
-
 
 CasualGame Player::getCasualGameStatus()
 {
@@ -316,11 +316,13 @@ void Player::changeRankedAct(string act)
 void Player::increaseRP(double RP, double health_bonus)
 {
     RP_ += RP + health_bonus;
+    rankLeveling(RP_);
 }
 
 void Player::decreaseRP(double RP)
 {
     RP_ -= RP;
+    rankLeveling(RP_);
 }
 
 
