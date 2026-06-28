@@ -98,20 +98,21 @@ bool Casual::shoot(Player *current_player, Player *other_player)
 
     current_player->addCasualAct(SHOOT);
     current_player->changeCasualAct("");
+    string op_act = other_player->getCasualGameStatus().act;
     other_player->changeCasualAct("");
     increaseTurnNumber();
 
-    if(other_player->getCasualGameStatus().act == SHOOT)
+    if(op_act == SHOOT)
     {
         other_player->addCasualAct(SHOOT);
         return false;
     }
-    else if(other_player->getCasualGameStatus().act == DEFEND)
+    else if(op_act == DEFEND)
     {
         other_player->addCasualAct(DEFEND);
         return false;
     }
-    else if(other_player->getCasualGameStatus().act == RELOAD)
+    else if(op_act == RELOAD)
     {
         other_player->addCasualAct(RELOAD);
         decreaseTurnNumber();
@@ -133,20 +134,21 @@ bool Casual::reload(Player *current_player, Player *other_player)
 
     current_player->addCasualAct(RELOAD);
     current_player->changeCasualAct("");
+    string op_act = other_player->getCasualGameStatus().act;
     other_player->changeCasualAct("");
     increaseTurnNumber();
 
-    if(other_player->getCasualGameStatus().act == RELOAD)
+    if(op_act == RELOAD)
     {
         other_player->addCasualAct(RELOAD);
         return true;
     }
-    else if(other_player->getCasualGameStatus().act == DEFEND)
+    else if(op_act == DEFEND)
     {
         other_player->addCasualAct(DEFEND);
         return true;
     }
-    else if(other_player->getCasualGameStatus().act == SHOOT)
+    else if(op_act == SHOOT)
     {
         other_player->addCasualAct(SHOOT);
         decreaseTurnNumber();
@@ -167,18 +169,19 @@ void Casual::defend(Player *current_player, Player *other_player)
     
     current_player->addCasualAct(DEFEND);
     current_player->changeCasualAct("");
+    string op_act = other_player->getCasualGameStatus().act;
     other_player->changeCasualAct("");
     increaseTurnNumber();
     
-    if(other_player->getCasualGameStatus().act == SHOOT)
+    if(op_act == SHOOT)
     {
         other_player->addCasualAct(SHOOT);
     }
-    else if(other_player->getCasualGameStatus().act == RELOAD)
+    else if(op_act == RELOAD)
     {
         other_player->addCasualAct(RELOAD);
     }
-    else if(other_player->getCasualGameStatus().act == DEFEND)
+    else if(op_act == DEFEND)
     {
         other_player->addCasualAct(DEFEND);
     }

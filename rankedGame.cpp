@@ -104,20 +104,21 @@ bool Ranked::shoot(Player *current_player, Player *other_player)
 
     current_player->addRankedAct(SHOOT);
     current_player->changeRankedAct("");
+    string op_act = other_player->getRankedGameStatus().act;
     other_player->changeRankedAct("");
     increaseTurnNumber();
 
-    if(other_player->getRankedGameStatus().act == SHOOT)
+    if(op_act == SHOOT)
     {
         other_player->addRankedAct(SHOOT);
         return false;
     }
-    else if(other_player->getRankedGameStatus().act == DEFEND)
+    else if(op_act == DEFEND)
     {
         other_player->addRankedAct(DEFEND);
         return false;
     }
-    else if(other_player->getRankedGameStatus().act == RELOAD)
+    else if(op_act == RELOAD)
     {
         other_player->addRankedAct(RELOAD);
         other_player->decreaseRankedHealth();
@@ -144,20 +145,21 @@ bool Ranked::reload(Player *current_player, Player *other_player)
 
     current_player->addRankedAct(RELOAD);
     current_player->changeRankedAct("");
+    string op_act = other_player->getRankedGameStatus().act;
     other_player->changeRankedAct("");
     increaseTurnNumber();
 
-    if(other_player->getRankedGameStatus().act == RELOAD)
+    if(op_act == RELOAD)
     {
         other_player->addRankedAct(RELOAD);
         return true;
     }
-    else if(other_player->getRankedGameStatus().act == DEFEND)
+    else if(op_act == DEFEND)
     {
         other_player->addRankedAct(DEFEND);
         return true;
     }
-    else if(other_player->getRankedGameStatus().act == SHOOT)
+    else if(op_act == SHOOT)
     {
         other_player->addRankedAct(SHOOT);
         current_player->decreaseRankedHealth();
@@ -183,18 +185,19 @@ void Ranked::defend(Player *current_player, Player *other_player)
     
     current_player->addRankedAct(DEFEND);
     current_player->changeRankedAct("");
+    string op_act = other_player->getRankedGameStatus().act;
     other_player->changeRankedAct("");
     increaseTurnNumber();
     
-    if(other_player->getRankedGameStatus().act == SHOOT)
+    if(op_act == SHOOT)
     {
         other_player->addRankedAct(SHOOT);
     }
-    else if(other_player->getRankedGameStatus().act == RELOAD)
+    else if(op_act == RELOAD)
     {
         other_player->addRankedAct(RELOAD);
     }
-    else if(other_player->getRankedGameStatus().act == DEFEND)
+    else if(op_act == DEFEND)
     {
         other_player->addRankedAct(DEFEND);
     }
